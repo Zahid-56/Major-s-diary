@@ -15,11 +15,18 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".DiaryWidget" android:exported="true" android:label="@string/app_name">
+        <receiver android:name=".DiaryWidget" android:exported="true" android:label="@string/widget_full">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_info" />
+        </receiver>
+
+        <receiver android:name=".MiniWidget" android:exported="true" android:label="@string/widget_mini">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_mini_info" />
         </receiver>
 
         <service
