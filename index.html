@@ -500,7 +500,13 @@ $("hello").onclick = () => {
   if (n && n.trim()) { userName = n.trim().slice(0, 30); put(NAME_KEY, userName); greet(); toast("Hello, " + userName + "!"); }
 };
 greet();
-setInterval(greet, 60 * 1000);
+const loadedOn = new Date().toDateString();
+setInterval(() => {
+  // New day (e.g. after midnight): reload so dates, "today" and ticks roll over like a calendar.
+  if (new Date().toDateString() !== loadedOn && !$("sheet").classList.contains("open")) location.reload();
+  greet();
+}, 60 * 1000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden && new Date().toDateString() !== loadedOn) location.reload(); });
 setInterval(() => { if (!document.hidden) nextQuote(); }, 2 * 60 * 1000);
 
 render();
