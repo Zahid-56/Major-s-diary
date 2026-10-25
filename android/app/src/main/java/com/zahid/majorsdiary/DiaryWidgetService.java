@@ -37,7 +37,7 @@ public class DiaryWidgetService extends RemoteViewsService {
         @Override public boolean hasStableIds() { return true; }
 
         private void load() {
-            items = Schedule.ITEMS[Schedule.today()];
+            items = Schedule.items(context, Schedule.today());
             done = DiaryWidget.loadDone(context);
         }
 

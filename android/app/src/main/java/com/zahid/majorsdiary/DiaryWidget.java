@@ -21,7 +21,6 @@ public class DiaryWidget extends AppWidgetProvider {
 
     static final String EXTRA_INDEX = "index";
     private static final String ACTION_TOGGLE = "com.zahid.majorsdiary.TOGGLE";
-    private static final String PREFS = "diary";
 
     @Override
     public void onUpdate(Context context, AppWidgetManager manager, int[] ids) {
@@ -53,7 +52,7 @@ public class DiaryWidget extends AppWidgetProvider {
     private static RemoteViews build(Context context, int widgetId) {
         RemoteViews v = new RemoteViews(context.getPackageName(), R.layout.widget);
         int day = Schedule.today();
-        int total = Schedule.ITEMS[day].length;
+        int total = Schedule.items(context, day).length;
         int count = 0;
         for (String s : loadDone(context)) {
             try {
@@ -64,7 +63,7 @@ public class DiaryWidget extends AppWidgetProvider {
         int pct = total == 0 ? 0 : Math.round(count * 100f / total);
 
         v.setTextViewText(R.id.title, Schedule.DAYS[day]);
-        v.setTextViewText(R.id.sub, count + " of " + total + " done  ·  " + (Schedule.SHIFT[day] ? "Shift 5:45 PM" : "No shift"));
+        v.setTextViewText(R.id.sub, count + " of " + total + " done  ·  " + (Schedule.hasShift(context, day) ? "Shift day" : "No shift"));
         v.setTextViewText(R.id.pct, pct + "%");
         v.setProgressBar(R.id.prog, 100, pct, false);
 
@@ -83,7 +82,13 @@ public class DiaryWidget extends AppWidgetProvider {
     }
 
     private static SharedPreferences prefs(Context context) {
-        return context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+        return context.getSharedPreferences(Schedule.PREFS, Context.MODE_PRIVATE);
+    }
+
+    /** Called when the user saves a new routine: clears today's ticks and redraws. */
+    static void routineChanged(Context context) {
+        prefs(context).edit().remove(todayKey()).apply();
+        refreshAll(context);
     }
 
     static Set<String> loadDone(Context context) {
