@@ -1,40 +1,45 @@
+<div align="center">
+
 # Major's Diary
 
-A personal daily planner built around the BSSE-5D class timetable — classes, study blocks, home workouts (no gym), naps and work-from-home shifts — with daily check-offs.
+**A personal daily planner with a home-screen widget — classes, study, home workouts and shifts, all in one place.**
 
-**Web app:** https://zahid-56.github.io/Major-s-diary/
-**Android widget:** download the latest `MajorsDiary.apk` from [Releases](https://github.com/Zahid-56/Major-s-diary/releases/latest)
+[![Download APK](https://img.shields.io/badge/Download-Android%20APK-E2C27D?style=for-the-badge&logo=android&logoColor=1a1204)](https://github.com/Zahid-56/Major-s-diary/releases/latest/download/MajorsDiary.apk)
+[![Open web app](https://img.shields.io/badge/Open-Web%20App-1a2133?style=for-the-badge&logo=googlechrome&logoColor=E2C27D)](https://zahid-56.github.io/Major-s-diary/)
+
+<img src="docs/assets/screenshot.jpg" alt="Major's Diary app" width="360">
+
+</div>
 
 ## Features
 
-- Full day plan from wake-up to sleep, with a day picker for the week
-- Home bodyweight workouts — no gym needed
-- Personal greeting ("Good morning, Major Sahab") and motivational quotes — tap your name to change it
-- Beautiful backgrounds: coding, nature or mixed photos from Unsplash that change every 2 minutes, or your own photo
-- Highlights what you should be doing right now
-- **Edit** button to build your own routine — add, change, remove or copy items between days, or start blank
-- Tap any item to check it off; progress resets every day
-- Installable web app (PWA) that works offline
-- Native Android home-screen widget with live progress
+- **Full day plan** — wake-up to sleep, built around the BSSE-5D class timetable
+- **Tap to check off** — progress ring and daily reset
+- **Make it yours** — edit any day, copy between days, or start from a blank routine
+- **Home workouts** — bodyweight sessions, no gym needed
+- **Beautiful backgrounds** — coding and nature photos that change every 2 minutes, or your own photo
+- **Personal greeting & quotes** — "Good morning, Major Sahab"; tap the name to change it
+- **Home-screen widgets** — a cute 2×2 *Mini* widget (now · next · progress) and a 4×4 *Full day* checklist
+- **Works offline** as an installable web app
 
-## Android widget
+## Install on Android
 
-1. Download and install `MajorsDiary.apk` from the latest release.
-2. Long-press your home screen → **Widgets** → **Major's Diary**.
-3. Tap a row to check it off. Tap the header to open the full planner.
-4. To use your own routine, open the app, tap **Edit** and save — the widget updates automatically.
+1. Download **[MajorsDiary.apk](https://github.com/Zahid-56/Major-s-diary/releases/latest/download/MajorsDiary.apk)** and open it (allow installs from your browser if asked).
+2. Long-press your home screen → **Widgets** → **Major's Diary · Mini** or **Full day**.
+3. Open the app and tap **Edit** to build your own routine — the widgets update automatically.
 
 ## Project structure
 
 ```
-index.html, sw.js, manifest.webmanifest, icon*   Web app (GitHub Pages)
-android/                                          Android app + widget (Java)
-.github/workflows/android.yml                     Builds the APK and publishes a release
+docs/          Web app (served by GitHub Pages)
+android/       Android app and widgets (Java)
+.github/       Workflow that builds the APK and publishes a release
 ```
 
-## Updating the schedule
+## Development
 
-- Web: edit the `week` data in `index.html`.
-- Android widget: edit `android/app/src/main/java/com/zahid/majorsdiary/Schedule.java`.
+- **Web:** plain HTML, CSS and JavaScript in `docs/index.html` — no build step.
+- **Android:** `cd android && gradle assembleDebug` (JDK 17, Android SDK 34).
+- Every push to `android/` builds a new APK and publishes it under **Releases**.
 
-Pushing changes to `android/` automatically builds a new APK release.
+<sub>Background photos from [Unsplash](https://unsplash.com).</sub>
