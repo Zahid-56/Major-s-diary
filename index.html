@@ -227,12 +227,15 @@ function fromInput(v){ if (!v) return null; const [h, m] = v.split(":").map(Numb
 function dur(m){ if (!m) return null; if (m < 60) return m + " min"; const h = m / 60; return (Number.isInteger(h) ? h : h.toFixed(1)) + (h === 1 ? " hour" : " hours"); }
 function nowMin(){ const n = new Date(); const m = n.getHours() * 60 + n.getMinutes(); return m < 360 ? m + 1440 : m; }
 
-function dateOf(i){ const d = new Date(); d.setDate(d.getDate() + (i - todayIdx)); return d; }
+/* Rolling week: today first, then the next 6 days. */
+function dateOf(i){ const d = new Date(); d.setDate(d.getDate() + ((i - todayIdx + 7) % 7)); return d; }
 function doneKey(i){ const d = dateOf(i); return "md-" + d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(); }
 
 /* ---------- main view ---------- */
-short.forEach((s, i) => {
+[0,1,2,3,4,5,6].map(k => (todayIdx + k) % 7).forEach(i => {
+  const s = short[i];
   const b = document.createElement("button");
+  b.dataset.i = i;
   b.className = "day" + (i === todayIdx ? " today" : "");
   b.innerHTML = s + "<small>" + dateOf(i).getDate() + "</small>";
   b.onclick = () => { sel = i; render(); };
@@ -243,7 +246,7 @@ function render(){
   const day = week[sel] || { items: [] }, list = day.items, k = doneKey(sel), done = get(k, []);
   let cur = -1;
   if (sel === todayIdx) { const m = nowMin(); list.forEach((it, i) => { if (it.s <= m) cur = i; }); }
-  document.querySelectorAll(".day").forEach((b, j) => b.classList.toggle("active", j === sel));
+  document.querySelectorAll(".day").forEach(b => b.classList.toggle("active", +b.dataset.i === sel));
   $("title").textContent = sel === todayIdx ? "Today" : NAMES[sel];
   $("date").textContent = new Intl.DateTimeFormat(undefined, { weekday: "long", day: "numeric", month: "long" }).format(dateOf(sel));
   $("dayName").textContent = NAMES[sel];
