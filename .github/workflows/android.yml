@@ -33,12 +33,15 @@ jobs:
         run: |
           gradle assembleDebug --no-daemon
           cp app/build/outputs/apk/debug/app-debug.apk ../MajorsDiary.apk
+          echo "VERSION=$(grep -oP "versionName '\K[^']+" app/build.gradle)" >> "$GITHUB_ENV"
 
       - name: Publish release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ github.run_number }}
-          name: Major's Diary v${{ github.run_number }}
+          tag_name: v${{ env.VERSION }}
+          name: Major's Diary ${{ env.VERSION }}
+          make_latest: true
+          overwrite_files: true
           body: |
             **Install:** download `MajorsDiary.apk` on your Android phone and open it.
             **Widgets:** long-press your home screen → Widgets → *Major's Diary · Mini* (2×2) or *Full day* (4×4).
