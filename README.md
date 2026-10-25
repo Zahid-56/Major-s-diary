@@ -9,6 +9,8 @@ A personal daily planner built around the BSSE-5D class timetable — classes, s
 
 - Full day plan from wake-up to sleep, with a day picker for the week
 - Home bodyweight workouts — no gym needed
+- Personal greeting ("Good morning, Major Sahab") and motivational quotes — tap your name to change it
+- Beautiful backgrounds: coding, nature or mixed photos from Unsplash that change every 2 minutes, or your own photo
 - Highlights what you should be doing right now
 - **Edit** button to build your own routine — add, change, remove or copy items between days, or start blank
 - Tap any item to check it off; progress resets every day
