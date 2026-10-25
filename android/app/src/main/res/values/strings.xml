@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">Major\'s Diary</string>
-    <string name="widget_desc">Today\'s routine — tap to check off</string>
     <string name="brand">MAJOR\'S DIARY</string>
+    <string name="widget_full">Major\'s Diary · Full day</string>
+    <string name="widget_desc">Today\'s full routine — tap any item to check it off</string>
+    <string name="widget_mini">Major\'s Diary · Mini</string>
+    <string name="mini_desc">What\'s now, what\'s next and today\'s progress</string>
+    <string name="mark_done">Mark as done</string>
 </resources>
