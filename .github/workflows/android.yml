@@ -9,6 +9,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: android-release
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -36,5 +40,6 @@ jobs:
           tag_name: v${{ github.run_number }}
           name: Major's Diary v${{ github.run_number }}
           body: |
-            Download **MajorsDiary.apk** on your Android phone, install it, then add the **Major's Diary** widget to your home screen.
+            **Install:** download `MajorsDiary.apk` on your Android phone and open it.
+            **Widgets:** long-press your home screen → Widgets → *Major's Diary · Mini* (2×2) or *Full day* (4×4).
           files: MajorsDiary.apk
