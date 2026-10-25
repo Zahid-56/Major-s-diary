@@ -54,6 +54,36 @@ h1{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:34px;line-height
 .item.now{border-color:rgba(226,194,125,.55);box-shadow:0 0 0 3px rgba(226,194,125,.08),0 10px 30px rgba(0,0,0,.35)}
 .t em{font-style:normal;margin-left:8px;padding:2px 7px;border-radius:99px;background:var(--gold);color:#1a1204;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase}
 .legend{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:18px;font-size:11px;color:var(--mut)}.legend i{display:inline-block;width:7px;height:7px;border-radius:9px;margin-right:5px;vertical-align:1px}
+.sec .acts{display:flex;gap:8px;align-items:center}
+.edit-btn{appearance:none;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--s2);color:var(--ink);border-radius:99px;padding:6px 12px;font:600 12px Inter,sans-serif;cursor:pointer}
+.edit-btn svg{width:13px;height:13px}
+.empty{padding:28px 16px;text-align:center;color:var(--mut);border:1px dashed var(--line);border-radius:18px;font-size:13.5px}
+.sample{margin-top:16px;padding:14px 16px;border-radius:18px;background:linear-gradient(160deg,rgba(226,194,125,.10),rgba(226,194,125,.03));border:1px solid rgba(226,194,125,.22);font-size:13px;color:#e9dcc0;display:flex;gap:12px;align-items:center;justify-content:space-between}
+.btn{appearance:none;border:0;border-radius:12px;padding:10px 14px;font:600 13px Inter,sans-serif;cursor:pointer}
+.btn.gold{background:linear-gradient(160deg,var(--gold),var(--gold2));color:#1a1204}
+.btn.ghost{background:var(--s2);color:var(--ink);border:1px solid var(--line)}
+.btn.danger{background:transparent;color:#f2a3a3;border:1px solid rgba(242,163,163,.3)}
+.sheet-bg{position:fixed;inset:0;background:rgba(3,4,8,.7);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:none;z-index:10}
+.sheet-bg.open{display:block}
+.sheet{position:fixed;left:0;right:0;bottom:0;max-width:520px;margin:0 auto;max-height:92vh;display:flex;flex-direction:column;background:#0e121c;border:1px solid var(--line);border-bottom:0;border-radius:24px 24px 0 0;z-index:11;transform:translateY(105%);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.sheet.open{transform:none}
+.sheet-h{padding:16px 18px 10px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line)}
+.sheet-h h3{margin:0;font-family:Fraunces,Georgia,serif;font-weight:600;font-size:21px}
+.sheet-h small{display:block;color:var(--mut);font-size:12px}
+.x{appearance:none;background:var(--s2);border:1px solid var(--line);color:var(--ink);width:34px;height:34px;border-radius:50%;font-size:18px;cursor:pointer}
+.sheet-b{overflow:auto;padding:14px 18px;display:flex;flex-direction:column;gap:10px}
+.erow{background:var(--s1);border:1px solid var(--line);border-radius:16px;padding:12px;display:grid;grid-template-columns:1fr 1fr 34px;gap:8px}
+.erow input,.erow select{width:100%;min-width:0;background:#151a27;border:1px solid #262d40;color:var(--ink);border-radius:10px;padding:9px 10px;font:500 13.5px Inter,sans-serif;color-scheme:dark}
+.erow input:focus,.erow select:focus{outline:none;border-color:rgba(226,194,125,.6)}
+.erow .full{grid-column:1/3}.erow .del{grid-row:1;grid-column:3;appearance:none;border:0;background:transparent;color:#f2a3a3;font-size:18px;cursor:pointer}
+.erow label{font-size:10px;color:var(--mut);letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:3px}
+.add{border:1px dashed rgba(226,194,125,.45);background:transparent;color:var(--gold)}
+.copy{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px;color:var(--mut)}
+.copy button{appearance:none;border:1px solid var(--line);background:var(--s1);color:var(--ink);border-radius:9px;padding:5px 9px;font:600 11.5px Inter,sans-serif;cursor:pointer}
+.sheet-f{padding:12px 18px calc(14px + env(safe-area-inset-bottom));border-top:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap}
+.sheet-f .sp{flex:1}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,40px);opacity:0;background:#1c2231;border:1px solid var(--line);color:var(--ink);padding:10px 16px;border-radius:12px;font-size:13px;transition:.25s;z-index:20}
+.toast.show{opacity:1;transform:translate(-50%,0)}
 footer{text-align:center;color:#5d6377;font-size:11.5px;margin-top:26px}
 </style>
 </head>
@@ -82,29 +112,69 @@ footer{text-align:center;color:#5d6377;font-size:11.5px;margin-top:26px}
     <div class="stat"><b id="sShift">–</b><span>Shift</span></div>
   </section>
 
-  <div class="sec"><h2 id="dayName"></h2><span class="tag" id="tag"></span></div>
+  <div class="sec"><h2 id="dayName"></h2><div class="acts"><span class="tag" id="tag"></span><button class="edit-btn" id="editBtn" aria-label="Edit this day"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>Edit</button></div></div>
   <div class="list" id="list"></div>
   
+  <div class="sample" id="sample"><div>This is a sample routine. Make it yours — edit any day or start from scratch.</div><div style="display:flex;flex-direction:column;gap:6px"><button class="btn gold" id="makeMine">Edit</button><button class="btn ghost" id="blank">Start blank</button></div></div>
   <div class="legend"><span><i style="background:#e2c27d"></i>Class</span><span><i style="background:#9fbcff"></i>Study</span><span><i style="background:#7ee0b4"></i>Workout</span><span><i style="background:#f2a3a3"></i>Shift</span><span><i style="background:#b4a7f0"></i>Sleep</span></div>
-  <footer>Tap an item to mark it done · progress is saved on this device</footer>
+  <footer>Tap an item to mark it done · everything is saved on this device</footer>
 </main>
 
+<div class="sheet-bg" id="sheetBg"></div>
+<section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="edTitle">
+  <div class="sheet-h"><div><h3 id="edTitle">Edit</h3><small>Add, change or remove items for this day</small></div><button class="x" id="closeEd" aria-label="Close">×</button></div>
+  <div class="sheet-b">
+    <div id="rows"></div>
+    <button class="btn add" id="addRow">+ Add item</button>
+    <div class="copy" id="copyDays"></div>
+  </div>
+  <div class="sheet-f">
+    <button class="btn danger" id="resetAll">Reset to sample</button>
+    <button class="btn ghost" id="clearDay">Clear day</button>
+    <span class="sp"></span>
+    <button class="btn gold" id="saveEd">Save</button>
+  </div>
+</section>
+<div class="toast" id="toast"></div>
+
+
 <script>
-const week = [{"name":"Monday","shift":false,"study":"1 hour","workout":"40 min","classes":5,"items":[{"t":"8:00 AM – 8:20 AM","s":480,"n":"Wake up & get ready","d":"Uni is next door — no rush","k":"life"},{"t":"8:30 AM – 9:30 AM","s":510,"n":"Web Engineering","d":"Muniba Bibi · A83-131","k":"class"},{"t":"9:30 AM – 10:30 AM","s":570,"n":"Data Structure & Algorithm","d":"Fawad Ali Shah · A83-010","k":"class"},{"t":"10:30 AM – 11:30 AM","s":630,"n":"Breakfast + DSA recap","d":"Free slot — eat, then 30 min recap","k":"life"},{"t":"11:30 AM – 1:30 PM","s":690,"n":"Operating System Lab","d":"Malik Ihtashim Asif · LAB A83-133","k":"class"},{"t":"1:30 PM – 2:30 PM","s":810,"n":"Computer Org. & Assembly","d":"Mehwish Malik · A82 Hall-217A","k":"class"},{"t":"2:30 PM – 3:30 PM","s":870,"n":"Design & Analysis of Algorithm","d":"Shahid Akbar · A83-223","k":"class"},{"t":"3:30 PM – 4:30 PM","s":930,"n":"Lunch + rest","d":"Recharge after a long class day","k":"life"},{"t":"5:00 PM – 6:00 PM","s":1020,"n":"Study · 1 hour","d":"Review today's lectures","k":"study"},{"t":"6:30 PM – 7:10 PM","s":1110,"n":"Workout · Upper body (home)","d":"Push-ups 4×12 · Pike push-ups 3×10 · Chair dips 3×12 · Plank 3×45s","k":"workout"},{"t":"8:00 PM – 8:30 PM","s":1200,"n":"Dinner","d":"","k":"life"},{"t":"9:00 PM – 10:00 PM","s":1260,"n":"Free time + prep for Tuesday","d":"Bag, notes, lab manual","k":"life"},{"t":"11:00 PM","s":1380,"n":"Sleep","d":"No shift tonight — full night's rest","k":"sleep"}]},{"name":"Tuesday","shift":true,"study":"1 hour","workout":"15 min","classes":3,"items":[{"t":"7:50 AM – 8:20 AM","s":470,"n":"Wake up & get ready","d":"","k":"life"},{"t":"8:30 AM – 11:30 AM","s":510,"n":"Data Structure & Algorithm Lab","d":"Fawad Ali Shah · LAB A83-016","k":"class"},{"t":"11:30 AM – 12:15 PM","s":690,"n":"Brunch","d":"","k":"life"},{"t":"12:15 PM – 1:15 PM","s":735,"n":"Study · 1 hour","d":"DSA lab follow-up","k":"study"},{"t":"1:30 PM – 2:30 PM","s":810,"n":"Computer Org. & Assembly","d":"Mehwish Malik · A83-130","k":"class"},{"t":"2:30 PM – 3:30 PM","s":870,"n":"Agile Software Development","d":"Sonia Rafaqat · A83-223","k":"class"},{"t":"3:45 PM – 5:00 PM","s":945,"n":"Nap","d":"Sleep bank before the night shift","k":"sleep"},{"t":"5:00 PM – 5:15 PM","s":1020,"n":"Mobility · 15 min","d":"Neck, shoulder & hip mobility · hamstring + back stretch","k":"workout"},{"t":"5:15 PM – 5:40 PM","s":1035,"n":"Meal","d":"Eat before the shift starts","k":"life"},{"t":"5:45 PM – 2:00 AM","s":1065,"n":"Work shift (from home)","d":"Work from home","k":"shift"},{"t":"2:15 AM","s":1575,"n":"Sleep","d":"","k":"sleep"}]},{"name":"Wednesday","shift":true,"study":"1 hour","workout":"Rest","classes":4,"items":[{"t":"9:00 AM – 9:25 AM","s":540,"n":"Wake up & breakfast","d":"","k":"life"},{"t":"9:30 AM – 10:30 AM","s":570,"n":"Operating System","d":"Malik Ihtashim Asif · A82 Hall-217A","k":"class"},{"t":"10:30 AM – 11:30 AM","s":630,"n":"Data Structure & Algorithm","d":"Fawad Ali Shah · A83-010","k":"class"},{"t":"11:30 AM – 12:15 PM","s":690,"n":"Lunch","d":"","k":"life"},{"t":"12:15 PM – 1:15 PM","s":735,"n":"Study · 1 hour","d":"Short and focused — recovery day","k":"study"},{"t":"1:30 PM – 2:30 PM","s":810,"n":"Design & Analysis of Algorithm","d":"Shahid Akbar · A83-131","k":"class"},{"t":"2:30 PM – 4:30 PM","s":870,"n":"Computer Org. & Assembly Lab","d":"Mehwish Malik · Hitech Lab-01","k":"class"},{"t":"4:35 PM – 5:20 PM","s":995,"n":"Power nap","d":"Rest day — no workout","k":"sleep"},{"t":"5:20 PM – 5:40 PM","s":1040,"n":"Meal","d":"","k":"life"},{"t":"5:45 PM – 2:00 AM","s":1065,"n":"Work shift (from home)","d":"Work from home","k":"shift"},{"t":"2:15 AM","s":1575,"n":"Sleep","d":"","k":"sleep"}]},{"name":"Thursday","shift":true,"study":"30 min","workout":"40 min","classes":4,"items":[{"t":"9:30 AM – 9:50 AM","s":570,"n":"Wake up & breakfast","d":"","k":"life"},{"t":"9:50 AM – 10:20 AM","s":590,"n":"Study · 30 min","d":"Quick review before class","k":"study"},{"t":"10:30 AM – 11:30 AM","s":630,"n":"Operating System","d":"Malik Ihtashim Asif · A83-130","k":"class"},{"t":"11:30 AM – 1:30 PM","s":690,"n":"Web Engineering Lab","d":"Muniba Bibi · LAB A83-005","k":"class"},{"t":"1:30 PM – 2:30 PM","s":810,"n":"Agile Software Development","d":"Sonia Rafaqat · A83-132","k":"class"},{"t":"2:30 PM – 3:30 PM","s":870,"n":"Design & Analysis of Algorithm","d":"Shahid Akbar · A83-132","k":"class"},{"t":"3:30 PM – 4:00 PM","s":930,"n":"Lunch","d":"","k":"life"},{"t":"4:15 PM – 4:55 PM","s":975,"n":"Workout · Lower body (home)","d":"Squats 4×20 · Lunges 3×12/leg · Glute bridges 3×15 · Wall sit 3×45s","k":"workout"},{"t":"5:00 PM – 5:40 PM","s":1020,"n":"Shower + meal","d":"","k":"life"},{"t":"5:45 PM – 2:00 AM","s":1065,"n":"Work shift (from home)","d":"Work from home","k":"shift"},{"t":"2:15 AM","s":1575,"n":"Sleep","d":"","k":"sleep"}]},{"name":"Friday","shift":true,"study":"1 hour","workout":"20 min","classes":3,"items":[{"t":"9:45 AM – 10:20 AM","s":585,"n":"Wake up & breakfast","d":"","k":"life"},{"t":"10:30 AM – 11:30 AM","s":630,"n":"Web Engineering","d":"Muniba Bibi · A83-223","k":"class"},{"t":"11:30 AM – 12:30 PM","s":690,"n":"Data Structure & Algorithm","d":"Fawad Ali Shah · A83-007","k":"class"},{"t":"12:30 PM – 1:30 PM","s":750,"n":"Lunch + break","d":"","k":"life"},{"t":"1:30 PM – 3:30 PM","s":810,"n":"Agile Software Development Lab","d":"Sonia Rafaqat · LAB A83-004","k":"class"},{"t":"3:30 PM – 4:30 PM","s":930,"n":"Study · 1 hour","d":"Week's notes + pending assignments","k":"study"},{"t":"4:35 PM – 4:55 PM","s":995,"n":"Workout · Core (home)","d":"Crunches 3×20 · Leg raises 3×12 · Mountain climbers 3×30s · Side plank 2×30s","k":"workout"},{"t":"5:00 PM – 5:40 PM","s":1020,"n":"Rest + meal","d":"","k":"life"},{"t":"5:45 PM – 2:00 AM","s":1065,"n":"Work shift (from home)","d":"Work from home","k":"shift"},{"t":"2:15 AM","s":1575,"n":"Sleep","d":"","k":"sleep"}]},{"name":"Saturday","shift":true,"study":"3 hours","workout":"45 min","classes":0,"items":[{"t":"10:00 AM – 10:30 AM","s":600,"n":"Wake up & breakfast","d":"","k":"life"},{"t":"11:00 AM – 1:50 PM","s":660,"n":"Deep study · 3 hours","d":"3 × 50 min blocks with 10 min breaks","k":"study"},{"t":"2:00 PM – 3:00 PM","s":840,"n":"Lunch","d":"","k":"life"},{"t":"3:00 PM – 4:00 PM","s":900,"n":"Errands / free time","d":"","k":"life"},{"t":"4:00 PM – 4:45 PM","s":960,"n":"Workout · Full body (home)","d":"4 rounds: 10 burpees · 15 push-ups · 20 squats · 30 jumping jacks · 40s plank","k":"workout"},{"t":"5:00 PM – 5:40 PM","s":1020,"n":"Shower + meal","d":"","k":"life"},{"t":"5:45 PM – 2:00 AM","s":1065,"n":"Work shift (from home)","d":"Work from home","k":"shift"},{"t":"2:15 AM","s":1575,"n":"Sleep","d":"","k":"sleep"}]},{"name":"Sunday","shift":false,"study":"3 hours","workout":"30 min","classes":0,"items":[{"t":"10:00 AM – 10:30 AM","s":600,"n":"Wake up & breakfast","d":"","k":"life"},{"t":"11:00 AM – 2:00 PM","s":660,"n":"Study · 3 hours","d":"Assignments + DSA practice","k":"study"},{"t":"2:00 PM – 3:00 PM","s":840,"n":"Lunch","d":"","k":"life"},{"t":"3:00 PM – 4:00 PM","s":900,"n":"Free time","d":"","k":"life"},{"t":"4:00 PM – 4:30 PM","s":960,"n":"Workout · HIIT (home)","d":"5 min warm-up · 20 min HIIT (40s on / 20s off) · 5 min stretch","k":"workout"},{"t":"5:00 PM – 6:00 PM","s":1020,"n":"Weekly review","d":"Plan the week, check deadlines","k":"study"},{"t":"8:00 PM – 8:30 PM","s":1200,"n":"Dinner","d":"","k":"life"},{"t":"10:30 PM","s":1350,"n":"Sleep","d":"Early night — 8:30 AM class tomorrow","k":"sleep"}]}];
+const SAMPLE = [{"name":"Monday","items":[{"s":480,"e":500,"n":"Wake up & get ready","d":"Uni is next door — no rush","k":"life"},{"s":510,"e":570,"n":"Web Engineering","d":"Muniba Bibi · A83-131","k":"class"},{"s":570,"e":630,"n":"Data Structure & Algorithm","d":"Fawad Ali Shah · A83-010","k":"class"},{"s":630,"e":690,"n":"Breakfast + DSA recap","d":"Free slot — eat, then 30 min recap","k":"life"},{"s":690,"e":810,"n":"Operating System Lab","d":"Malik Ihtashim Asif · LAB A83-133","k":"class"},{"s":810,"e":870,"n":"Computer Org. & Assembly","d":"Mehwish Malik · A82 Hall-217A","k":"class"},{"s":870,"e":930,"n":"Design & Analysis of Algorithm","d":"Shahid Akbar · A83-223","k":"class"},{"s":930,"e":990,"n":"Lunch + rest","d":"Recharge after a long class day","k":"life"},{"s":1020,"e":1080,"n":"Study · 1 hour","d":"Review today's lectures","k":"study"},{"s":1110,"e":1150,"n":"Workout · Upper body (home)","d":"Push-ups 4×12 · Pike push-ups 3×10 · Chair dips 3×12 · Plank 3×45s","k":"workout"},{"s":1200,"e":1230,"n":"Dinner","d":"","k":"life"},{"s":1260,"e":1320,"n":"Free time + prep for Tuesday","d":"Bag, notes, lab manual","k":"life"},{"s":1380,"e":1910,"n":"Sleep","d":"No shift tonight — full night's rest","k":"sleep"}]},{"name":"Tuesday","items":[{"s":470,"e":500,"n":"Wake up & get ready","d":"","k":"life"},{"s":510,"e":690,"n":"Data Structure & Algorithm Lab","d":"Fawad Ali Shah · LAB A83-016","k":"class"},{"s":690,"e":735,"n":"Brunch","d":"","k":"life"},{"s":735,"e":795,"n":"Study · 1 hour","d":"DSA lab follow-up","k":"study"},{"s":810,"e":870,"n":"Computer Org. & Assembly","d":"Mehwish Malik · A83-130","k":"class"},{"s":870,"e":930,"n":"Agile Software Development","d":"Sonia Rafaqat · A83-223","k":"class"},{"s":945,"e":1020,"n":"Nap","d":"Sleep bank before the night shift","k":"sleep"},{"s":1020,"e":1035,"n":"Mobility · 15 min","d":"Neck, shoulder & hip mobility · hamstring + back stretch","k":"workout"},{"s":1035,"e":1060,"n":"Meal","d":"Eat before the shift starts","k":"life"},{"s":1065,"e":1560,"n":"Work shift (from home)","d":"Work from home","k":"shift"},{"s":1575,"e":1980,"n":"Sleep","d":"","k":"sleep"}]},{"name":"Wednesday","items":[{"s":540,"e":565,"n":"Wake up & breakfast","d":"","k":"life"},{"s":570,"e":630,"n":"Operating System","d":"Malik Ihtashim Asif · A82 Hall-217A","k":"class"},{"s":630,"e":690,"n":"Data Structure & Algorithm","d":"Fawad Ali Shah · A83-010","k":"class"},{"s":690,"e":735,"n":"Lunch","d":"","k":"life"},{"s":735,"e":795,"n":"Study · 1 hour","d":"Short and focused — recovery day","k":"study"},{"s":810,"e":870,"n":"Design & Analysis of Algorithm","d":"Shahid Akbar · A83-131","k":"class"},{"s":870,"e":990,"n":"Computer Org. & Assembly Lab","d":"Mehwish Malik · Hitech Lab-01","k":"class"},{"s":995,"e":1040,"n":"Power nap","d":"Rest day — no workout","k":"sleep"},{"s":1040,"e":1060,"n":"Meal","d":"","k":"life"},{"s":1065,"e":1560,"n":"Work shift (from home)","d":"Work from home","k":"shift"},{"s":1575,"e":2010,"n":"Sleep","d":"","k":"sleep"}]},{"name":"Thursday","items":[{"s":570,"e":590,"n":"Wake up & breakfast","d":"","k":"life"},{"s":590,"e":620,"n":"Study · 30 min","d":"Quick review before class","k":"study"},{"s":630,"e":690,"n":"Operating System","d":"Malik Ihtashim Asif · A83-130","k":"class"},{"s":690,"e":810,"n":"Web Engineering Lab","d":"Muniba Bibi · LAB A83-005","k":"class"},{"s":810,"e":870,"n":"Agile Software Development","d":"Sonia Rafaqat · A83-132","k":"class"},{"s":870,"e":930,"n":"Design & Analysis of Algorithm","d":"Shahid Akbar · A83-132","k":"class"},{"s":930,"e":960,"n":"Lunch","d":"","k":"life"},{"s":975,"e":1015,"n":"Workout · Lower body (home)","d":"Squats 4×20 · Lunges 3×12/leg · Glute bridges 3×15 · Wall sit 3×45s","k":"workout"},{"s":1020,"e":1060,"n":"Shower + meal","d":"","k":"life"},{"s":1065,"e":1560,"n":"Work shift (from home)","d":"Work from home","k":"shift"},{"s":1575,"e":2025,"n":"Sleep","d":"","k":"sleep"}]},{"name":"Friday","items":[{"s":585,"e":620,"n":"Wake up & breakfast","d":"","k":"life"},{"s":630,"e":690,"n":"Web Engineering","d":"Muniba Bibi · A83-223","k":"class"},{"s":690,"e":750,"n":"Data Structure & Algorithm","d":"Fawad Ali Shah · A83-007","k":"class"},{"s":750,"e":810,"n":"Lunch + break","d":"","k":"life"},{"s":810,"e":930,"n":"Agile Software Development Lab","d":"Sonia Rafaqat · LAB A83-004","k":"class"},{"s":930,"e":990,"n":"Study · 1 hour","d":"Week's notes + pending assignments","k":"study"},{"s":995,"e":1015,"n":"Workout · Core (home)","d":"Crunches 3×20 · Leg raises 3×12 · Mountain climbers 3×30s · Side plank 2×30s","k":"workout"},{"s":1020,"e":1060,"n":"Rest + meal","d":"","k":"life"},{"s":1065,"e":1560,"n":"Work shift (from home)","d":"Work from home","k":"shift"},{"s":1575,"e":2040,"n":"Sleep","d":"","k":"sleep"}]},{"name":"Saturday","items":[{"s":600,"e":630,"n":"Wake up & breakfast","d":"","k":"life"},{"s":660,"e":830,"n":"Deep study · 3 hours","d":"3 × 50 min blocks with 10 min breaks","k":"study"},{"s":840,"e":900,"n":"Lunch","d":"","k":"life"},{"s":900,"e":960,"n":"Errands / free time","d":"","k":"life"},{"s":960,"e":1005,"n":"Workout · Full body (home)","d":"4 rounds: 10 burpees · 15 push-ups · 20 squats · 30 jumping jacks · 40s plank","k":"workout"},{"s":1020,"e":1060,"n":"Shower + meal","d":"","k":"life"},{"s":1065,"e":1560,"n":"Work shift (from home)","d":"Work from home","k":"shift"},{"s":1575,"e":2040,"n":"Sleep","d":"","k":"sleep"}]},{"name":"Sunday","items":[{"s":600,"e":630,"n":"Wake up & breakfast","d":"","k":"life"},{"s":660,"e":840,"n":"Study · 3 hours","d":"Assignments + DSA practice","k":"study"},{"s":840,"e":900,"n":"Lunch","d":"","k":"life"},{"s":900,"e":960,"n":"Free time","d":"","k":"life"},{"s":960,"e":990,"n":"Workout · HIIT (home)","d":"5 min warm-up · 20 min HIIT (40s on / 20s off) · 5 min stretch","k":"workout"},{"s":1020,"e":1080,"n":"Weekly review","d":"Plan the week, check deadlines","k":"study"},{"s":1200,"e":1230,"n":"Dinner","d":"","k":"life"},{"s":1350,"e":1920,"n":"Sleep","d":"Early night — 8:30 AM class tomorrow","k":"sleep"}]}];
 const short = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+const NAMES = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+const TYPES = [["class","Class"],["study","Study"],["workout","Workout"],["shift","Work / shift"],["sleep","Sleep / nap"],["life","Other"]];
+const ROUTINE_KEY = "md-routine";
 const todayIdx = (new Date().getDay() + 6) % 7;
 let sel = todayIdx;
 const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const check = '<svg width="14" height="14" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#1a1204" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
+/* ---------- storage ---------- */
+function get(k, f){ try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : f; } catch(e){ return f; } }
+function put(k, v){ try { v === null ? localStorage.removeItem(k) : localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+let custom = get(ROUTINE_KEY, null);
+let week = custom || SAMPLE;
+
+function syncNative(){
+  try { if (window.MajorsDiary) window.MajorsDiary.saveRoutine(custom ? JSON.stringify(custom) : ""); } catch(e){}
+}
+function saveWeek(w){
+  custom = w; week = w || SAMPLE; put(ROUTINE_KEY, w); syncNative();
+}
+
+/* ---------- time helpers ---------- */
+function fmt(m){ const h = Math.floor(m / 60) % 24, mm = m % 60; return (h % 12 || 12) + ":" + String(mm).padStart(2, "0") + " " + (h < 12 ? "AM" : "PM"); }
+function range(it){ return it.e != null ? fmt(it.s) + " – " + fmt(it.e) : fmt(it.s); }
+function toInput(m){ const h = Math.floor(m / 60) % 24; return String(h).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0"); }
+function fromInput(v){ if (!v) return null; const [h, m] = v.split(":").map(Number); return h * 60 + m; }
+function dur(m){ if (!m) return null; if (m < 60) return m + " min"; const h = m / 60; return (Number.isInteger(h) ? h : h.toFixed(1)) + (h === 1 ? " hour" : " hours"); }
+function nowMin(){ const n = new Date(); const m = n.getHours() * 60 + n.getMinutes(); return m < 360 ? m + 1440 : m; }
+
 function dateOf(i){ const d = new Date(); d.setDate(d.getDate() + (i - todayIdx)); return d; }
-function key(i){ const d = dateOf(i); return "md-" + d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate(); }
-function load(k){ try { return JSON.parse(localStorage.getItem(k) || "[]"); } catch(e){ return []; } }
-function save(k,v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+function doneKey(i){ const d = dateOf(i); return "md-" + d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(); }
 
-function items(d){ return d.items; }
-function nowMin(){ const n=new Date(); let m=n.getHours()*60+n.getMinutes(); return m<360?m+1440:m; }
-
+/* ---------- main view ---------- */
 short.forEach((s, i) => {
   const b = document.createElement("button");
   b.className = "day" + (i === todayIdx ? " today" : "");
@@ -114,36 +184,125 @@ short.forEach((s, i) => {
 });
 
 function render(){
-  const d = week[sel], list = items(d), k = key(sel), done = load(k);
-  let cur = -1; if (sel === todayIdx) { const m = nowMin(); list.forEach((it, i) => { if (it.s <= m) cur = i; }); }
+  const day = week[sel] || { items: [] }, list = day.items, k = doneKey(sel), done = get(k, []);
+  let cur = -1;
+  if (sel === todayIdx) { const m = nowMin(); list.forEach((it, i) => { if (it.s <= m) cur = i; }); }
   document.querySelectorAll(".day").forEach((b, j) => b.classList.toggle("active", j === sel));
-  $("title").textContent = sel === todayIdx ? "Today" : d.name;
+  $("title").textContent = sel === todayIdx ? "Today" : NAMES[sel];
   $("date").textContent = new Intl.DateTimeFormat(undefined, { weekday: "long", day: "numeric", month: "long" }).format(dateOf(sel));
-  $("dayName").textContent = d.name;
-  $("tag").textContent = d.shift ? "Shift day" : "No shift";
-  $("tag").className = "tag" + (d.shift ? "" : " off");
-  $("sClasses").textContent = d.classes;
-  $("sStudy").textContent = d.study;
-  $("sWork").textContent = d.workout;
-  $("sShift").textContent = d.shift ? "5:45 PM" : "Off";
-  $("tag").textContent = d.shift ? "Shift · from home" : "No shift";
-    $("list").innerHTML = list.map((it, i) =>
-    `<div class="item k-${it.k}${done.includes(i) ? " done" : ""}${i===cur ? " now" : ""}" data-i="${i}" role="checkbox" aria-checked="${done.includes(i)}" tabindex="0">
+  $("dayName").textContent = NAMES[sel];
+
+  const sum = t => list.filter(i => i.k === t && i.e != null).reduce((a, i) => a + (i.e - i.s), 0);
+  const shift = list.find(i => i.k === "shift");
+  $("sClasses").textContent = list.filter(i => i.k === "class").length;
+  $("sStudy").textContent = dur(sum("study")) || "–";
+  $("sWork").textContent = dur(sum("workout")) || "Rest";
+  $("sShift").textContent = shift ? fmt(shift.s) : "Off";
+  $("tag").textContent = shift ? "Shift day" : "No shift";
+  $("tag").className = "tag" + (shift ? "" : " off");
+
+  $("list").innerHTML = list.length ? list.map((it, i) =>
+    `<div class="item k-${esc(it.k)}${done.includes(i) ? " done" : ""}${i === cur ? " now" : ""}" data-i="${i}" role="checkbox" aria-checked="${done.includes(i)}" tabindex="0">
       <div class="chk">${check}</div>
-      <div><div class="t">${it.t}${i===cur ? '<em>Now</em>' : ''}</div><div class="n">${it.n}</div>${it.d ? `<div class="d">${it.d}</div>` : ''}</div>
-    </div>`).join("");
+      <div><div class="t">${range(it)}${i === cur ? "<em>Now</em>" : ""}</div><div class="n">${esc(it.n)}</div>${it.d ? `<div class="d">${esc(it.d)}</div>` : ""}</div>
+    </div>`).join("")
+    : `<div class="empty">Nothing planned for ${NAMES[sel]} yet.<br><br><button class="btn gold" onclick="openEditor()">+ Add your first item</button></div>`;
+
   document.querySelectorAll(".item").forEach(el => {
-    const toggle = () => { const i = +el.dataset.i, cur = load(k), j = cur.indexOf(i); j < 0 ? cur.push(i) : cur.splice(j, 1); save(k, cur); render(); };
+    const toggle = () => { const i = +el.dataset.i, c = get(k, []), j = c.indexOf(i); j < 0 ? c.push(i) : c.splice(j, 1); put(k, c); render(); };
     el.onclick = toggle;
     el.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } };
   });
-  const n = done.length, pct = Math.round(n / list.length * 100);
-  $("pct").textContent = pct + "%";
-  $("cnt").textContent = n + "/" + list.length + " DONE";
-  $("arc").style.strokeDashoffset = 232.5 * (1 - n / list.length);
-}
-render();
 
+  const n = done.filter(i => i < list.length).length, total = list.length || 1;
+  $("pct").textContent = Math.round(n / total * 100) + "%";
+  $("cnt").textContent = n + "/" + list.length + " DONE";
+  $("arc").style.strokeDashoffset = 232.5 * (1 - n / total);
+  $("sample").style.display = custom ? "none" : "flex";
+}
+
+/* ---------- editor ---------- */
+let draft = [];
+function openEditor(){
+  draft = JSON.parse(JSON.stringify((week[sel] || { items: [] }).items));
+  $("edTitle").textContent = "Edit " + NAMES[sel];
+  $("copyDays").innerHTML = "Copy to: " + short.map((s, i) => i === sel ? "" : `<button data-c="${i}">${s}</button>`).join("");
+  $("copyDays").querySelectorAll("button").forEach(b => b.onclick = () => copyTo(+b.dataset.c));
+  drawRows();
+  $("sheetBg").classList.add("open"); $("sheet").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeEditor(){
+  $("sheetBg").classList.remove("open"); $("sheet").classList.remove("open");
+  document.body.style.overflow = "";
+}
+function drawRows(){
+  $("rows").innerHTML = draft.map((it, i) => `
+    <div class="erow" data-i="${i}">
+      <div><label>Start</label><input type="time" data-f="s" value="${toInput(it.s)}"></div>
+      <div><label>End</label><input type="time" data-f="e" value="${it.e != null ? toInput(it.e) : ""}"></div>
+      <div class="full"><select data-f="k">${TYPES.map(([v, l]) => `<option value="${v}"${v === it.k ? " selected" : ""}>${l}</option>`).join("")}</select></div>
+      <button class="del" data-del="${i}" aria-label="Remove">✕</button>
+      <div class="full"><input data-f="n" placeholder="What? e.g. Web Engineering" value="${esc(it.n)}"></div>
+      <div class="full"><input data-f="d" placeholder="Details (optional) e.g. Room A83-131" value="${esc(it.d)}"></div>
+    </div>`).join("") || `<div class="empty">No items. Tap “Add item” to start.</div>`;
+  $("rows").querySelectorAll("[data-del]").forEach(b => b.onclick = () => { readRows(); draft.splice(+b.dataset.del, 1); drawRows(); });
+}
+function readRows(){
+  draft = [...$("rows").querySelectorAll(".erow")].map(r => {
+    const v = f => r.querySelector(`[data-f="${f}"]`).value;
+    let s = fromInput(v("s")) ?? 480, e = fromInput(v("e"));
+    if (s < 300) s += 1440;               // after midnight (e.g. 2:15 AM) belongs to the night
+    if (e != null) while (e <= s) e += 1440;
+    return { s, e, n: v("n").trim(), d: v("d").trim(), k: v("k") };
+  });
+}
+function addRow(){
+  readRows();
+  const last = draft[draft.length - 1];
+  const s = last && last.e != null && last.e < 1440 ? last.e : 720;
+  draft.push({ s, e: s + 60, n: "", d: "", k: "class" });
+  drawRows();
+  const rows = $("rows").querySelectorAll('[data-f="n"]'); rows[rows.length - 1]?.focus();
+}
+function currentWeek(){ return JSON.parse(JSON.stringify(custom || SAMPLE)); }
+function commit(items, dayIdx){
+  const w = currentWeek();
+  w[dayIdx].items = items.filter(i => i.n).sort((a, b) => a.s - b.s);
+  put(doneKey(dayIdx), null);
+  saveWeek(w);
+}
+function saveEditor(){
+  readRows();
+  if (draft.some(i => !i.n)) { if (!confirm("Items without a name will be removed. Continue?")) return; }
+  commit(draft, sel); closeEditor(); render(); toast("Saved ✓");
+}
+function copyTo(i){
+  readRows(); commit(draft, sel); commit(draft, i); render(); toast("Copied to " + NAMES[i]);
+}
+function clearDay(){ draft = []; drawRows(); }
+function startBlank(){
+  if (!confirm("Start a blank routine? The sample schedule will be removed from this device.")) return;
+  saveWeek(NAMES.map(name => ({ name, items: [] }))); render(); openEditor();
+}
+function resetSample(){
+  if (!confirm("Reset to the sample routine? Your own routine will be removed.")) return;
+  saveWeek(null); closeEditor(); render(); toast("Sample routine restored");
+}
+function toast(t){ const el = $("toast"); el.textContent = t; el.classList.add("show"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("show"), 1800); }
+
+$("editBtn").onclick = openEditor;
+$("sheetBg").onclick = closeEditor;
+$("closeEd").onclick = closeEditor;
+$("addRow").onclick = addRow;
+$("saveEd").onclick = saveEditor;
+$("clearDay").onclick = clearDay;
+$("resetAll").onclick = resetSample;
+$("makeMine").onclick = openEditor;
+$("blank").onclick = startBlank;
+
+render();
+syncNative();
 if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}));
 </script>
 </body>

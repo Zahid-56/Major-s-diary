@@ -10,6 +10,7 @@ A personal daily planner built around the BSSE-5D class timetable — classes, s
 - Full day plan from wake-up to sleep, with a day picker for the week
 - Home bodyweight workouts — no gym needed
 - Highlights what you should be doing right now
+- **Edit** button to build your own routine — add, change, remove or copy items between days, or start blank
 - Tap any item to check it off; progress resets every day
 - Installable web app (PWA) that works offline
 - Native Android home-screen widget with live progress
@@ -19,6 +20,7 @@ A personal daily planner built around the BSSE-5D class timetable — classes, s
 1. Download and install `MajorsDiary.apk` from the latest release.
 2. Long-press your home screen → **Widgets** → **Major's Diary**.
 3. Tap a row to check it off. Tap the header to open the full planner.
+4. To use your own routine, open the app, tap **Edit** and save — the widget updates automatically.
 
 ## Project structure
 
