@@ -31,14 +31,18 @@ public class DiaryWidget extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
         if (ACTION_TOGGLE.equals(intent.getAction())) {
-            int index = intent.getIntExtra(EXTRA_INDEX, -1);
-            if (index < 0) return;
-            Set<String> done = loadDone(context);
-            String key = String.valueOf(index);
-            if (!done.remove(key)) done.add(key);
-            prefs(context).edit().putStringSet(todayKey(), done).apply();
-            refreshAll(context);
+            toggle(context, intent.getIntExtra(EXTRA_INDEX, -1));
         }
+    }
+
+    /** Checks or unchecks one of today's items, then redraws every widget. */
+    static void toggle(Context context, int index) {
+        if (index < 0) return;
+        Set<String> done = loadDone(context);
+        String key = String.valueOf(index);
+        if (!done.remove(key)) done.add(key);
+        prefs(context).edit().putStringSet(todayKey(), done).apply();
+        refreshAll(context);
     }
 
     static void refreshAll(Context context) {
@@ -46,6 +50,7 @@ public class DiaryWidget extends AppWidgetProvider {
         int[] ids = manager.getAppWidgetIds(new ComponentName(context, DiaryWidget.class));
         for (int id : ids) manager.updateAppWidget(id, build(context, id));
         manager.notifyAppWidgetViewDataChanged(ids, R.id.list);
+        MiniWidget.refresh(context);
         scheduleMidnightRefresh(context);
     }
 
