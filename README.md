@@ -40,6 +40,6 @@ android/       Android app and widgets (Java)
 
 - **Web:** plain HTML, CSS and JavaScript in `docs/index.html` — no build step.
 - **Android:** `cd android && gradle assembleDebug` (JDK 17, Android SDK 34).
-- Every push to `android/` builds a new APK and publishes it under **Releases**.
+- Every push to `android/` builds the APK and publishes it under **Releases**, named after `versionName` in `android/app/build.gradle` (e.g. *Major's Diary 1.0*).
 
 <sub>Background photos from [Unsplash](https://unsplash.com).</sub>
