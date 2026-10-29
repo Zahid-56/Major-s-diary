@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CR Panel · Major's Diary</title>
+<meta name="theme-color" content="#07090f">
+<meta name="robots" content="noindex">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07090f;--s1:rgba(255,255,255,.035);--s2:rgba(255,255,255,.06);--line:rgba(255,255,255,.08);--ink:#f4f1ea;--mut:#8d93a5;--gold:#e2c27d;--gold2:#b8893e;--ok:#7ee0b4;--bad:#f2a3a3}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 Inter,system-ui,sans-serif}
+body{min-height:100vh;background:radial-gradient(900px 500px at 85% -10%,rgba(226,194,125,.13),transparent 60%),radial-gradient(700px 500px at -10% 30%,rgba(90,110,180,.12),transparent 60%),var(--bg)}
+.wrap{max-width:720px;margin:0 auto;padding:calc(20px + env(safe-area-inset-top)) 16px 60px}
+a{color:var(--gold)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+.eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600}
+h1{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:30px;margin:4px 0 2px}
+h2{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:20px;margin:0 0 12px}
+.sub{color:var(--mut);font-size:13px}
+.panel{background:rgba(12,15,24,.6);border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:14px}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:4px;border-radius:16px;background:var(--s1);border:1px solid var(--line);margin-bottom:14px}
+.tab{appearance:none;border:0;background:transparent;color:var(--mut);padding:10px 4px;border-radius:12px;font:600 13px Inter,sans-serif;cursor:pointer}
+.tab.on{background:linear-gradient(160deg,var(--gold),var(--gold2));color:#1a1204}
+label.l{display:block;font-size:10.5px;color:var(--mut);letter-spacing:.1em;text-transform:uppercase;margin:12px 0 5px}
+input,select,textarea{width:100%;background:#151a27;border:1px solid #262d40;color:var(--ink);border-radius:12px;padding:11px 12px;font:500 14px Inter,sans-serif;color-scheme:dark}
+textarea{min-height:80px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:none;border-color:rgba(226,194,125,.6)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{appearance:none;border:0;border-radius:12px;padding:11px 16px;font:700 13.5px Inter,sans-serif;cursor:pointer}
+.btn.gold{background:linear-gradient(160deg,var(--gold),var(--gold2));color:#1a1204}
+.btn.ghost{background:var(--s2);color:var(--ink);border:1px solid var(--line)}
+.btn.danger{background:transparent;color:var(--bad);border:1px solid rgba(242,163,163,.3)}
+.btn.sm{padding:7px 11px;font-size:12px}
+.btn:disabled{opacity:.6;cursor:wait}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.item{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 0;border-top:1px solid var(--line)}
+.item:first-of-type{border-top:0}
+.item b{display:block;font-size:14px}.item small{color:var(--mut);font-size:12px}
+.tag{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.q{border:1px solid var(--line);background:var(--s1);border-radius:16px;padding:14px;margin-top:10px}
+.q .qh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.q .qh b{color:var(--gold)}
+.opt{display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:center;margin-top:6px}
+.opt input[type=radio]{width:20px;height:20px;accent-color:#e2c27d;margin:0 auto}
+.hint{font-size:12px;color:var(--mut);margin-top:6px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:9px 6px;border-bottom:1px solid var(--line)}
+th{font-size:10.5px;color:var(--mut);letter-spacing:.1em;text-transform:uppercase}
+.score{font-weight:700;color:var(--gold)}
+.msg{padding:12px 14px;border-radius:12px;margin-top:12px;font-size:13px}
+.msg.err{background:rgba(242,163,163,.1);color:var(--bad);border:1px solid rgba(242,163,163,.3)}
+.msg.ok{background:rgba(126,224,180,.08);color:var(--ok);border:1px solid rgba(126,224,180,.25)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.stat{background:var(--s1);border:1px solid var(--line);border-radius:16px;padding:12px}
+.stat b{display:block;font:600 24px Fraunces,Georgia,serif;color:var(--gold)}.stat span{font-size:11px;color:var(--mut)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,40px);opacity:0;background:#1c2231;border:1px solid var(--line);color:var(--ink);padding:10px 16px;border-radius:12px;font-size:13px;transition:.25s;z-index:20}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.center{max-width:420px;margin:8vh auto 0}
+.link{background:none;border:0;color:var(--gold);font:600 13px Inter,sans-serif;cursor:pointer;padding:0}
+.empty{color:var(--mut);font-size:13px;text-align:center;padding:16px}
+@media(max-width:520px){.row{grid-template-columns:1fr}.tab{font-size:12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <!-- ---------- login ---------- -->
+  <section id="auth" class="center" hidden>
+    <div class="eyebrow">Major's Diary</div>
+    <h1>CR Panel</h1>
+    <div class="sub" id="authSub">Sign in to manage notes and quizzes for your class.</div>
+    <div class="panel" style="margin-top:16px">
+      <label class="l">Email</label><input id="email" type="email" autocomplete="username">
+      <label class="l">Password</label><input id="pass" type="password" autocomplete="current-password" minlength="8">
+      <div class="actions"><button class="btn gold" id="authBtn" style="flex:1">Sign in</button></div>
+      <div class="hint" style="text-align:center;margin-top:12px"><button class="link" id="authSwitch">First time? Create your CR account</button></div>
+      <div id="authMsg"></div>
+    </div>
+    <div class="sub" style="text-align:center"><a href="./">← Back to app</a></div>
+  </section>
+
+  <!-- ---------- panel ---------- -->
+  <section id="app" hidden>
+    <div class="top">
+      <div><div class="eyebrow">CR Panel</div><h1 id="clsName"></h1><div class="sub" id="who"></div></div>
+      <button class="btn ghost sm" id="logout">Sign out</button>
+    </div>
+    <div class="stats"><div class="stat"><b id="stNotes">0</b><span>Notes</span></div><div class="stat"><b id="stQuiz">0</b><span>Quizzes</span></div><div class="stat"><b id="stAtt">0</b><span>Submissions</span></div></div>
+    <nav class="tabs">
+      <button class="tab on" data-t="notes">Notes</button><button class="tab" data-t="quiz">Quizzes</button><button class="tab" data-t="results">Results</button><button class="tab" data-t="ann">Announce</button>
+    </nav>
+
+    <div data-p="notes">
+      <div class="panel">
+        <h2>Upload notes</h2>
+        <div class="row"><div><label class="l">Subject</label><select id="nSubject"></select></div><div><label class="l">Title</label><input id="nTitle" placeholder="e.g. Lecture 7 — Paging"></div></div>
+        <label class="l">Description (optional)</label><input id="nDesc" placeholder="Short note for students">
+        <label class="l">File (PDF, slides, image, doc…)</label><input id="nFile" type="file">
+        <label class="l">…or a link (Google Drive, YouTube, etc.)</label><input id="nLink" type="url" placeholder="https://">
+        <div class="actions"><button class="btn gold" id="nSave">Upload notes</button></div>
+        <div id="nMsg"></div>
+      </div>
+      <div class="panel"><h2>Uploaded notes</h2><div id="nList"></div></div>
+    </div>
+
+    <div data-p="quiz" hidden>
+      <div class="panel">
+        <h2>Create a quiz</h2>
+        <div class="row"><div><label class="l">Subject</label><select id="qSubject"></select></div><div><label class="l">Title</label><input id="qTitle" placeholder="e.g. OS Quiz 3 — Scheduling"></div></div>
+        <label class="l">Instructions (optional)</label><input id="qDesc" placeholder="e.g. Chapter 5, no negative marking">
+        <div class="row"><div><label class="l">Time limit (minutes, optional)</label><input id="qTime" type="number" min="1" max="180" placeholder="10"></div><div><label class="l">Closes at (optional)</label><input id="qDue" type="datetime-local"></div></div>
+        <div id="qList"></div>
+        <div class="actions"><button class="btn ghost" id="qAdd">+ Add question</button><span style="flex:1"></span><button class="btn gold" id="qSave">Publish quiz</button></div>
+        <div class="hint">Tick the correct option for each question. Answers stay private — students only see their score.</div>
+        <div id="qMsg"></div>
+      </div>
+      <div class="panel"><h2>Published quizzes</h2><div id="qzList"></div></div>
+    </div>
+
+    <div data-p="results" hidden>
+      <div class="panel">
+        <h2>Results</h2>
+        <label class="l">Quiz</label><select id="rQuiz"></select>
+        <div id="rTable" style="margin-top:12px"></div>
+        <div class="actions"><button class="btn ghost sm" id="rCsv">Download CSV</button></div>
+      </div>
+    </div>
+
+    <div data-p="ann" hidden>
+      <div class="panel">
+        <h2>Announcement</h2>
+        <textarea id="aText" placeholder="e.g. Tomorrow's DSA class is moved to 11:30 in A83-010"></textarea>
+        <div class="actions"><button class="btn gold" id="aSave">Post to class</button></div>
+        <div class="hint">Shows at the top of the Class tab and sends a notification to the app.</div>
+      </div>
+      <div class="panel"><h2>Recent</h2><div id="aList"></div></div>
+    </div>
+  </section>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script>
+const C = window.MD;
+const sb = supabase.createClient(C.url, C.key);
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const when = d => new Intl.DateTimeFormat(undefined, { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }).format(new Date(d));
+function toast(t){ const el = $("toast"); el.textContent = t; el.classList.add("show"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("show"), 2200); }
+function msg(id, text, ok){ $(id).innerHTML = text ? `<div class="msg ${ok ? "ok" : "err"}">${esc(text)}</div>` : ""; }
+async function busy(btn, fn){ const t = btn.textContent; btn.disabled = true; btn.textContent = "Please wait…"; try { await fn(); } finally { btn.disabled = false; btn.textContent = t; } }
+
+/* ---------- auth ---------- */
+let signup = false;
+$("authSwitch").onclick = () => {
+  signup = !signup;
+  $("authBtn").textContent = signup ? "Create account" : "Sign in";
+  $("authSwitch").textContent = signup ? "Already have an account? Sign in" : "First time? Create your CR account";
+  $("authSub").textContent = signup ? "Use the CR email. You'll get a confirmation email — open it once, then sign in here." : "Sign in to manage notes and quizzes for your class.";
+  $("pass").autocomplete = signup ? "new-password" : "current-password";
+  msg("authMsg", "");
+};
+$("authBtn").onclick = () => busy($("authBtn"), async () => {
+  const email = $("email").value.trim(), password = $("pass").value;
+  if (!email || password.length < 8) { msg("authMsg", "Enter your email and a password of at least 8 characters."); return; }
+  if (signup) {
+    const { error } = await sb.auth.signUp({ email, password, options: { emailRedirectTo: location.href.split("#")[0] } });
+    if (error) return msg("authMsg", error.message);
+    msg("authMsg", "Account created. Check your email and tap the confirmation link, then come back and sign in.", true);
+    $("authSwitch").click();
+  } else {
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) return msg("authMsg", /confirm/i.test(error.message) ? "Please confirm your email first — check your inbox." : "Wrong email or password.");
+    start();
+  }
+});
+$("pass").onkeydown = e => { if (e.key === "Enter") $("authBtn").click(); };
+$("logout").onclick = async () => { await sb.auth.signOut(); location.reload(); };
+
+async function start(){
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { $("auth").hidden = false; $("app").hidden = true; return; }
+  const { data: ok } = await sb.rpc("is_admin");
+  if (!ok) { await sb.auth.signOut(); $("auth").hidden = false; msg("authMsg", "This account is not the CR account for " + C.className + "."); return; }
+  $("auth").hidden = true; $("app").hidden = false;
+  $("clsName").textContent = C.className;
+  $("who").textContent = "Signed in as " + session.user.email;
+  const opts = C.subjects.map(s => `<option>${esc(s)}</option>`).join("");
+  $("nSubject").innerHTML = opts; $("qSubject").innerHTML = opts;
+  if (!$("qList").children.length) { addQ(); }
+  refresh();
+}
+
+/* ---------- tabs ---------- */
+document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
+  document.querySelectorAll(".tab").forEach(x => x.classList.toggle("on", x === t));
+  document.querySelectorAll("[data-p]").forEach(p => p.hidden = p.dataset.p !== t.dataset.t);
+  if (t.dataset.t === "results") loadResults();
+});
+
+/* ---------- lists ---------- */
+let quizzes = [];
+async function refresh(){
+  const [n, q, a, att] = await Promise.all([
+    sb.from("notes").select("*").order("created_at", { ascending: false }),
+    sb.from("quizzes").select("*").order("created_at", { ascending: false }),
+    sb.from("announcements").select("*").order("created_at", { ascending: false }).limit(20),
+    sb.from("quiz_attempts").select("quiz_id", { count: "exact", head: false })
+  ]);
+  const notes = n.data || []; quizzes = q.data || []; const anns = a.data || []; const atts = att.data || [];
+  $("stNotes").textContent = notes.length; $("stQuiz").textContent = quizzes.length; $("stAtt").textContent = atts.length;
+  const counts = atts.reduce((m, x) => (m[x.quiz_id] = (m[x.quiz_id] || 0) + 1, m), {});
+
+  $("nList").innerHTML = notes.length ? notes.map(x => `<div class="item"><div><span class="tag">${esc(C.short[x.subject] || x.subject)}</span><b>${esc(x.title)}</b><small>${when(x.created_at)}${x.file_name ? " · " + esc(x.file_name) : x.link ? " · link" : ""}</small></div><button class="btn danger sm" data-del-note="${x.id}">Delete</button></div>`).join("") : '<div class="empty">No notes yet.</div>';
+  $("qzList").innerHTML = quizzes.length ? quizzes.map(x => `<div class="item"><div><span class="tag">${esc(C.short[x.subject] || x.subject)}</span><b>${esc(x.title)}</b><small>${x.questions.length} questions · ${counts[x.id] || 0} submitted${x.due_at ? " · closes " + when(x.due_at) : ""}</small></div><button class="btn danger sm" data-del-quiz="${x.id}">Delete</button></div>`).join("") : '<div class="empty">No quizzes yet.</div>';
+  $("aList").innerHTML = anns.length ? anns.map(x => `<div class="item"><div><b style="font-weight:500">${esc(x.message)}</b><small>${when(x.created_at)}</small></div><button class="btn danger sm" data-del-ann="${x.id}">Delete</button></div>`).join("") : '<div class="empty">No announcements.</div>';
+  $("rQuiz").innerHTML = quizzes.map(x => `<option value="${x.id}">${esc(x.title)} (${counts[x.id] || 0})</option>`).join("") || "<option value=''>No quizzes yet</option>";
+
+  document.querySelectorAll("[data-del-note]").forEach(b => b.onclick = () => delNote(notes.find(x => x.id === b.dataset.delNote)));
+  document.querySelectorAll("[data-del-quiz]").forEach(b => b.onclick = async () => { if (!confirm("Delete this quiz and all its results?")) return; await sb.from("quizzes").delete().eq("id", b.dataset.delQuiz); toast("Quiz deleted"); refresh(); });
+  document.querySelectorAll("[data-del-ann]").forEach(b => b.onclick = async () => { await sb.from("announcements").delete().eq("id", b.dataset.delAnn); refresh(); });
+}
+
+/* ---------- notes ---------- */
+$("nSave").onclick = () => busy($("nSave"), async () => {
+  const subject = $("nSubject").value, title = $("nTitle").value.trim(), description = $("nDesc").value.trim();
+  const file = $("nFile").files[0], link = $("nLink").value.trim();
+  if (!title) return msg("nMsg", "Add a title.");
+  if (!file && !link) return msg("nMsg", "Choose a file or paste a link.");
+  if (file && file.size > 50 * 1024 * 1024) return msg("nMsg", "File is larger than 50 MB.");
+  let row = { subject, title, description, link: link || null };
+  if (file) {
+    const safe = file.name.replace(/[^\w.\-]+/g, "_");
+    const path = `${Date.now()}_${safe}`;
+    const { error } = await sb.storage.from("notes").upload(path, file, { contentType: file.type || "application/octet-stream" });
+    if (error) return msg("nMsg", "Upload failed: " + error.message);
+    Object.assign(row, { file_path: path, file_name: file.name, file_size: file.size });
+  }
+  const { error } = await sb.from("notes").insert(row);
+  if (error) return msg("nMsg", error.message);
+  ["nTitle", "nDesc", "nLink", "nFile"].forEach(id => $(id).value = "");
+  msg("nMsg", "Uploaded — your class will be notified.", true); refresh();
+});
+async function delNote(n){
+  if (!n || !confirm("Delete “" + n.title + "”?")) return;
+  if (n.file_path) await sb.storage.from("notes").remove([n.file_path]);
+  await sb.from("notes").delete().eq("id", n.id); toast("Deleted"); refresh();
+}
+
+/* ---------- quiz builder ---------- */
+function addQ(){
+  const i = $("qList").children.length;
+  const d = document.createElement("div"); d.className = "q";
+  d.innerHTML = `<div class="qh"><b>Question ${i + 1}</b><button class="btn danger sm" type="button">Remove</button></div>
+    <textarea class="qt" placeholder="Type the question" style="min-height:60px"></textarea>
+    ${[0, 1, 2, 3].map(j => `<div class="opt"><input type="radio" name="ans${Date.now()}${i}" value="${j}"${j === 0 ? " checked" : ""} title="Correct answer"><input class="qo" placeholder="Option ${"ABCD"[j]}${j > 1 ? " (optional)" : ""}"></div>`).join("")}`;
+  d.querySelector(".btn").onclick = () => { d.remove(); renumber(); };
+  $("qList").appendChild(d);
+}
+function renumber(){ [...$("qList").children].forEach((q, i) => q.querySelector(".qh b").textContent = "Question " + (i + 1)); }
+$("qAdd").onclick = () => { addQ(); $("qList").lastChild.querySelector(".qt").focus(); };
+$("qSave").onclick = () => busy($("qSave"), async () => {
+  const title = $("qTitle").value.trim(); if (!title) return msg("qMsg", "Add a quiz title.");
+  const questions = [], answers = [];
+  for (const [i, el] of [...$("qList").children].entries()) {
+    const q = el.querySelector(".qt").value.trim();
+    const raw = [...el.querySelectorAll(".qo")].map(o => o.value.trim());
+    const checked = +el.querySelector("input[type=radio]:checked").value;
+    if (!q) return msg("qMsg", `Question ${i + 1} is empty.`);
+    const options = [], map = {};
+    raw.forEach((o, j) => { if (o) { map[j] = options.length; options.push(o); } });
+    if (options.length < 2) return msg("qMsg", `Question ${i + 1} needs at least 2 options.`);
+    if (map[checked] === undefined) return msg("qMsg", `Question ${i + 1}: the ticked correct option is empty.`);
+    questions.push({ q, options }); answers.push(map[checked]);
+  }
+  if (!questions.length) return msg("qMsg", "Add at least one question.");
+  const due = $("qDue").value ? new Date($("qDue").value).toISOString() : null;
+  const { data, error } = await sb.from("quizzes").insert({
+    subject: $("qSubject").value, title, description: $("qDesc").value.trim(),
+    time_limit_min: +$("qTime").value || null, due_at: due, questions, published: false
+  }).select().single();
+  if (error) return msg("qMsg", error.message);
+  const k = await sb.from("quiz_keys").insert({ quiz_id: data.id, answers });
+  if (k.error) { await sb.from("quizzes").delete().eq("id", data.id); return msg("qMsg", k.error.message); }
+  await sb.from("quizzes").update({ published: true }).eq("id", data.id);
+  ["qTitle", "qDesc", "qTime", "qDue"].forEach(id => $(id).value = ""); $("qList").innerHTML = ""; addQ();
+  msg("qMsg", "Quiz published — your class will be notified.", true); refresh();
+});
+
+/* ---------- results ---------- */
+let rows = [];
+async function loadResults(){
+  const id = $("rQuiz").value; if (!id) { $("rTable").innerHTML = '<div class="empty">No quizzes yet.</div>'; return; }
+  const { data } = await sb.from("quiz_attempts").select("*").eq("quiz_id", id).order("score", { ascending: false }).order("submitted_at");
+  rows = data || [];
+  $("rTable").innerHTML = rows.length ? `<table><tr><th>#</th><th>Name</th><th>Roll no</th><th>Score</th><th>Submitted</th></tr>${rows.map((r, i) => `<tr><td>${i + 1}</td><td>${esc(r.student_name)}</td><td>${esc(r.roll_no)}</td><td class="score">${r.score}/${r.total}</td><td>${when(r.submitted_at)}</td></tr>`).join("")}</table>` : '<div class="empty">No submissions yet.</div>';
+}
+$("rQuiz").onchange = loadResults;
+$("rCsv").onclick = () => {
+  if (!rows.length) return toast("No results to download");
+  const q = quizzes.find(x => x.id === $("rQuiz").value);
+  const csv = [["Name", "Roll no", "Score", "Total", "Submitted"], ...rows.map(r => [r.student_name, r.roll_no, r.score, r.total, new Date(r.submitted_at).toLocaleString()])]
+    .map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+  a.download = (q ? q.title : "results").replace(/[^\w\-]+/g, "_") + ".csv"; a.click();
+};
+
+/* ---------- announcements ---------- */
+$("aSave").onclick = () => busy($("aSave"), async () => {
+  const message = $("aText").value.trim(); if (!message) return toast("Write something first");
+  const { error } = await sb.from("announcements").insert({ message });
+  if (error) return toast(error.message);
+  $("aText").value = ""; toast("Posted to class ✓"); refresh();
+});
+
+start();
+</script>
+</body>
+</html>

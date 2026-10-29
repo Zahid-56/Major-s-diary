@@ -118,6 +118,7 @@ body.photo .quote{background:rgba(12,15,24,.5);-webkit-backdrop-filter:blur(14px
 body.photo .greet b{text-shadow:0 2px 18px rgba(0,0,0,.7)}
 footer{text-align:center;color:#5d6377;font-size:11.5px;margin-top:26px}
 </style>
+<link rel="stylesheet" href="class.css">
 </head>
 <body>
 <div class="bg" aria-hidden="true"><div class="bgimg" id="bgA"></div><div class="bgimg" id="bgB"></div><div class="bgshade"></div></div>
@@ -142,6 +143,12 @@ footer{text-align:center;color:#5d6377;font-size:11.5px;margin-top:26px}
 
   <div class="quote" id="quote" title="Tap for another"><p id="qText"></p><small>For you, <span id="qName"></span></small></div>
 
+  <div class="tabs" role="tablist">
+    <button class="tab on" id="tabRoutine" role="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>My routine</button>
+    <button class="tab" id="tabClass" role="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 9L12 4 2 9l10 5 10-5z"/><path d="M6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/></svg>Class<i class="dot" id="classDot"></i></button>
+  </div>
+
+  <div id="routineView">
   <nav class="days" id="days" aria-label="Choose day"></nav>
 
   <section class="stats">
@@ -156,7 +163,11 @@ footer{text-align:center;color:#5d6377;font-size:11.5px;margin-top:26px}
   
   <div class="sample" id="sample"><div>This is a sample routine. Make it yours — edit any day or start from scratch.</div><div style="display:flex;flex-direction:column;gap:6px"><button class="btn gold" id="makeMine">Edit</button><button class="btn ghost" id="blank">Start blank</button></div></div>
   <div class="legend"><span><i style="background:#e2c27d"></i>Class</span><span><i style="background:#9fbcff"></i>Study</span><span><i style="background:#7ee0b4"></i>Workout</span><span><i style="background:#f2a3a3"></i>Shift</span><span><i style="background:#b4a7f0"></i>Sleep</span></div>
-  <footer>Tap an item to mark it done · everything is saved on this device<br><span class="credit" id="credit">Photos from Unsplash</span></footer>
+  </div>
+
+  <div id="classView" hidden></div>
+
+  <footer>Your routine is saved on this device<br><span class="credit" id="credit">Photos from Unsplash</span></footer>
 </main>
 
 <div class="sheet-bg" id="sheetBg"></div>
@@ -190,6 +201,12 @@ footer{text-align:center;color:#5d6377;font-size:11.5px;margin-top:26px}
     <button class="btn ghost" data-mode="none" id="plainBtn">Plain dark background</button>
     <div class="hint">Your choice is saved on this device</div>
   </div>
+</section>
+<div class="sheet-bg" id="qzSheetBg"></div>
+<section class="sheet" id="qzSheet" role="dialog" aria-modal="true" aria-labelledby="qzTitle">
+  <div class="sheet-h"><div><h3 id="qzTitle">Quiz</h3><small id="qzSub"></small></div><button class="x" id="qzClose" aria-label="Close">×</button></div>
+  <div class="sheet-b" id="qzBody"></div>
+  <div class="sheet-f" id="qzFoot"></div>
 </section>
 <div class="toast" id="toast"></div>
 
@@ -513,5 +530,7 @@ render();
 syncNative();
 if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}));
 </script>
+<script src="config.js"></script>
+<script src="class.js"></script>
 </body>
 </html>
