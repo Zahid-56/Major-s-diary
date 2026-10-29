@@ -80,6 +80,7 @@ jobs:
             echo "===== app errors =====" && cat errors.txt
             adb shell pidof com.zahid.majorsdiary && echo "APP IS RUNNING" || echo "APP NOT RUNNING"
             if grep -q "com.zahid.majorsdiary" crash.txt; then echo "::error::App crashed — see crash buffer above"; exit 1; fi
+            if grep -q "Background setup failed" errors.txt; then echo "::error::Background setup failed — see app errors above"; exit 1; fi
             adb shell pidof com.zahid.majorsdiary
 
   release:
