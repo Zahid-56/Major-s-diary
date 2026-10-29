@@ -141,7 +141,7 @@ footer{text-align:center;color:#5d6377;font-size:11.5px;margin-top:26px}
     </div>
   </header>
 
-  <div class="quote" id="quote" title="Tap for another"><p id="qText"></p><small>For you, <span id="qName"></span></small></div>
+  <div class="quote" id="quote" title="Tap for another"><p id="qText"></p><small>Major's Diary · <span id="qName"></span></small></div>
 
   <div class="tabs" role="tablist">
     <button class="tab on" id="tabRoutine" role="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>My routine</button>
@@ -153,15 +153,15 @@ footer{text-align:center;color:#5d6377;font-size:11.5px;margin-top:26px}
 
   <section class="stats">
     <div class="stat"><b id="sClasses">–</b><span>Classes</span></div>
-    <div class="stat"><b id="sStudy">–</b><span>Study</span></div>
-    <div class="stat"><b id="sWork">–</b><span>Workout</span></div>
-    <div class="stat"><b id="sShift">–</b><span>Shift</span></div>
+    <div class="stat"><b id="sStudy">–</b><span>Starts</span></div>
+    <div class="stat"><b id="sWork">–</b><span>Ends</span></div>
+    <div class="stat"><b id="sShift">–</b><span>Labs</span></div>
   </section>
 
   <div class="sec"><h2 id="dayName"></h2><div class="acts"><span class="tag" id="tag"></span><button class="edit-btn" id="editBtn" aria-label="Edit this day"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>Edit</button></div></div>
   <div class="list" id="list"></div>
   
-  <div class="sample" id="sample"><div>This is a sample routine. Make it yours — edit any day or start from scratch.</div><div style="display:flex;flex-direction:column;gap:6px"><button class="btn gold" id="makeMine">Edit</button><button class="btn ghost" id="blank">Start blank</button></div></div>
+  <div class="sample" id="sample"><div>This is the BSSE-5D class timetable. Tap Edit to add your own study, gym or work time.</div><div style="display:flex;flex-direction:column;gap:6px"><button class="btn gold" id="makeMine">Edit</button><button class="btn ghost" id="blank">Start blank</button></div></div>
   <div class="legend"><span><i style="background:#e2c27d"></i>Class</span><span><i style="background:#9fbcff"></i>Study</span><span><i style="background:#7ee0b4"></i>Workout</span><span><i style="background:#f2a3a3"></i>Shift</span><span><i style="background:#b4a7f0"></i>Sleep</span></div>
   </div>
 
@@ -179,7 +179,7 @@ footer{text-align:center;color:#5d6377;font-size:11.5px;margin-top:26px}
     <div class="copy" id="copyDays"></div>
   </div>
   <div class="sheet-f">
-    <button class="btn danger" id="resetAll">Reset to sample</button>
+    <button class="btn danger" id="resetAll">Reset timetable</button>
     <button class="btn ghost" id="clearDay">Clear day</button>
     <span class="sp"></span>
     <button class="btn gold" id="saveEd">Save</button>
@@ -212,7 +212,7 @@ footer{text-align:center;color:#5d6377;font-size:11.5px;margin-top:26px}
 
 
 <script>
-const SAMPLE = [{"name":"Monday","items":[{"s":480,"e":500,"n":"Wake up & get ready","d":"Uni is next door — no rush","k":"life"},{"s":510,"e":570,"n":"Web Engineering","d":"Muniba Bibi · A83-131","k":"class"},{"s":570,"e":630,"n":"Data Structure & Algorithm","d":"Fawad Ali Shah · A83-010","k":"class"},{"s":630,"e":690,"n":"Breakfast + DSA recap","d":"Free slot — eat, then 30 min recap","k":"life"},{"s":690,"e":810,"n":"Operating System Lab","d":"Malik Ihtashim Asif · LAB A83-133","k":"class"},{"s":810,"e":870,"n":"Computer Org. & Assembly","d":"Mehwish Malik · A82 Hall-217A","k":"class"},{"s":870,"e":930,"n":"Design & Analysis of Algorithm","d":"Shahid Akbar · A83-223","k":"class"},{"s":930,"e":990,"n":"Lunch + rest","d":"Recharge after a long class day","k":"life"},{"s":1020,"e":1080,"n":"Study · 1 hour","d":"Review today's lectures","k":"study"},{"s":1110,"e":1150,"n":"Workout · Upper body (home)","d":"Push-ups 4×12 · Pike push-ups 3×10 · Chair dips 3×12 · Plank 3×45s","k":"workout"},{"s":1200,"e":1230,"n":"Dinner","d":"","k":"life"},{"s":1260,"e":1320,"n":"Free time + prep for Tuesday","d":"Bag, notes, lab manual","k":"life"},{"s":1380,"e":1910,"n":"Sleep","d":"No shift tonight — full night's rest","k":"sleep"}]},{"name":"Tuesday","items":[{"s":470,"e":500,"n":"Wake up & get ready","d":"","k":"life"},{"s":510,"e":690,"n":"Data Structure & Algorithm Lab","d":"Fawad Ali Shah · LAB A83-016","k":"class"},{"s":690,"e":735,"n":"Brunch","d":"","k":"life"},{"s":735,"e":795,"n":"Study · 1 hour","d":"DSA lab follow-up","k":"study"},{"s":810,"e":870,"n":"Computer Org. & Assembly","d":"Mehwish Malik · A83-130","k":"class"},{"s":870,"e":930,"n":"Agile Software Development","d":"Sonia Rafaqat · A83-223","k":"class"},{"s":945,"e":1020,"n":"Nap","d":"Sleep bank before the night shift","k":"sleep"},{"s":1020,"e":1035,"n":"Mobility · 15 min","d":"Neck, shoulder & hip mobility · hamstring + back stretch","k":"workout"},{"s":1035,"e":1060,"n":"Meal","d":"Eat before the shift starts","k":"life"},{"s":1065,"e":1560,"n":"Work shift (from home)","d":"Work from home","k":"shift"},{"s":1575,"e":1980,"n":"Sleep","d":"","k":"sleep"}]},{"name":"Wednesday","items":[{"s":540,"e":565,"n":"Wake up & breakfast","d":"","k":"life"},{"s":570,"e":630,"n":"Operating System","d":"Malik Ihtashim Asif · A82 Hall-217A","k":"class"},{"s":630,"e":690,"n":"Data Structure & Algorithm","d":"Fawad Ali Shah · A83-010","k":"class"},{"s":690,"e":735,"n":"Lunch","d":"","k":"life"},{"s":735,"e":795,"n":"Study · 1 hour","d":"Short and focused — recovery day","k":"study"},{"s":810,"e":870,"n":"Design & Analysis of Algorithm","d":"Shahid Akbar · A83-131","k":"class"},{"s":870,"e":990,"n":"Computer Org. & Assembly Lab","d":"Mehwish Malik · Hitech Lab-01","k":"class"},{"s":995,"e":1040,"n":"Power nap","d":"Rest day — no workout","k":"sleep"},{"s":1040,"e":1060,"n":"Meal","d":"","k":"life"},{"s":1065,"e":1560,"n":"Work shift (from home)","d":"Work from home","k":"shift"},{"s":1575,"e":2010,"n":"Sleep","d":"","k":"sleep"}]},{"name":"Thursday","items":[{"s":570,"e":590,"n":"Wake up & breakfast","d":"","k":"life"},{"s":590,"e":620,"n":"Study · 30 min","d":"Quick review before class","k":"study"},{"s":630,"e":690,"n":"Operating System","d":"Malik Ihtashim Asif · A83-130","k":"class"},{"s":690,"e":810,"n":"Web Engineering Lab","d":"Muniba Bibi · LAB A83-005","k":"class"},{"s":810,"e":870,"n":"Agile Software Development","d":"Sonia Rafaqat · A83-132","k":"class"},{"s":870,"e":930,"n":"Design & Analysis of Algorithm","d":"Shahid Akbar · A83-132","k":"class"},{"s":930,"e":960,"n":"Lunch","d":"","k":"life"},{"s":975,"e":1015,"n":"Workout · Lower body (home)","d":"Squats 4×20 · Lunges 3×12/leg · Glute bridges 3×15 · Wall sit 3×45s","k":"workout"},{"s":1020,"e":1060,"n":"Shower + meal","d":"","k":"life"},{"s":1065,"e":1560,"n":"Work shift (from home)","d":"Work from home","k":"shift"},{"s":1575,"e":2025,"n":"Sleep","d":"","k":"sleep"}]},{"name":"Friday","items":[{"s":585,"e":620,"n":"Wake up & breakfast","d":"","k":"life"},{"s":630,"e":690,"n":"Web Engineering","d":"Muniba Bibi · A83-223","k":"class"},{"s":690,"e":750,"n":"Data Structure & Algorithm","d":"Fawad Ali Shah · A83-007","k":"class"},{"s":750,"e":810,"n":"Lunch + break","d":"","k":"life"},{"s":810,"e":930,"n":"Agile Software Development Lab","d":"Sonia Rafaqat · LAB A83-004","k":"class"},{"s":930,"e":990,"n":"Study · 1 hour","d":"Week's notes + pending assignments","k":"study"},{"s":995,"e":1015,"n":"Workout · Core (home)","d":"Crunches 3×20 · Leg raises 3×12 · Mountain climbers 3×30s · Side plank 2×30s","k":"workout"},{"s":1020,"e":1060,"n":"Rest + meal","d":"","k":"life"},{"s":1065,"e":1560,"n":"Work shift (from home)","d":"Work from home","k":"shift"},{"s":1575,"e":2040,"n":"Sleep","d":"","k":"sleep"}]},{"name":"Saturday","items":[{"s":600,"e":630,"n":"Wake up & breakfast","d":"","k":"life"},{"s":660,"e":830,"n":"Deep study · 3 hours","d":"3 × 50 min blocks with 10 min breaks","k":"study"},{"s":840,"e":900,"n":"Lunch","d":"","k":"life"},{"s":900,"e":960,"n":"Errands / free time","d":"","k":"life"},{"s":960,"e":1005,"n":"Workout · Full body (home)","d":"4 rounds: 10 burpees · 15 push-ups · 20 squats · 30 jumping jacks · 40s plank","k":"workout"},{"s":1020,"e":1060,"n":"Shower + meal","d":"","k":"life"},{"s":1065,"e":1560,"n":"Work shift (from home)","d":"Work from home","k":"shift"},{"s":1575,"e":2040,"n":"Sleep","d":"","k":"sleep"}]},{"name":"Sunday","items":[{"s":600,"e":630,"n":"Wake up & breakfast","d":"","k":"life"},{"s":660,"e":840,"n":"Study · 3 hours","d":"Assignments + DSA practice","k":"study"},{"s":840,"e":900,"n":"Lunch","d":"","k":"life"},{"s":900,"e":960,"n":"Free time","d":"","k":"life"},{"s":960,"e":990,"n":"Workout · HIIT (home)","d":"5 min warm-up · 20 min HIIT (40s on / 20s off) · 5 min stretch","k":"workout"},{"s":1020,"e":1080,"n":"Weekly review","d":"Plan the week, check deadlines","k":"study"},{"s":1200,"e":1230,"n":"Dinner","d":"","k":"life"},{"s":1350,"e":1920,"n":"Sleep","d":"Early night — 8:30 AM class tomorrow","k":"sleep"}]}];
+const SAMPLE = [{"name":"Monday","items":[{"s":510,"e":570,"n":"Web Engineering","d":"Muniba Bibi · A83-131","k":"class"},{"s":570,"e":630,"n":"Data Structure & Algorithm","d":"Fawad Ali Shah · A83-010","k":"class"},{"s":690,"e":810,"n":"Operating System Lab","d":"Malik Ihtashim Asif · LAB A83-133","k":"class"},{"s":810,"e":860,"n":"Computer Org. & Assembly","d":"Mehwish Malik · A82 Hall-217A","k":"class"},{"s":860,"e":910,"n":"Design & Analysis of Algorithm","d":"Shahid Akbar · A83-223","k":"class"}]},{"name":"Tuesday","items":[{"s":510,"e":690,"n":"Data Structure & Algorithm Lab","d":"Fawad Ali Shah · LAB A83-016","k":"class"},{"s":810,"e":860,"n":"Computer Org. & Assembly","d":"Mehwish Malik · A83-130","k":"class"},{"s":860,"e":910,"n":"Agile Software Development","d":"Sonia Rafaqat · A83-223","k":"class"}]},{"name":"Wednesday","items":[{"s":570,"e":630,"n":"Operating System","d":"Malik Ihtashim Asif · A82 Hall-217A","k":"class"},{"s":630,"e":690,"n":"Data Structure & Algorithm","d":"Fawad Ali Shah · A83-010","k":"class"},{"s":810,"e":860,"n":"Design & Analysis of Algorithm","d":"Shahid Akbar · A83-131","k":"class"},{"s":860,"e":960,"n":"Computer Org. & Assembly Lab","d":"Mehwish Malik · Hitech Lab-01","k":"class"}]},{"name":"Thursday","items":[{"s":630,"e":690,"n":"Operating System","d":"Malik Ihtashim Asif · A83-130","k":"class"},{"s":810,"e":860,"n":"Agile Software Development","d":"Sonia Rafaqat · A83-132","k":"class"},{"s":860,"e":910,"n":"Design & Analysis of Algorithm","d":"Shahid Akbar · A83-132","k":"class"}]},{"name":"Friday","items":[{"s":510,"e":630,"n":"Web Engineering Lab","d":"Muniba Bibi · LAB A83-01","k":"class"},{"s":630,"e":690,"n":"Web Engineering","d":"Muniba Bibi · A83-223","k":"class"},{"s":690,"e":750,"n":"Data Structure & Algorithm","d":"Fawad Ali Shah · A83-007","k":"class"},{"s":810,"e":910,"n":"Agile Software Development Lab","d":"Sonia Rafaqat · LAB A83-004","k":"class"}]},{"name":"Saturday","items":[]},{"name":"Sunday","items":[]}];
 const short = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 const NAMES = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 const TYPES = [["class","Class"],["study","Study"],["workout","Workout"],["shift","Work / shift"],["sleep","Sleep / nap"],["life","Other"]];
@@ -271,11 +271,13 @@ function render(){
   const sum = t => list.filter(i => i.k === t && i.e != null).reduce((a, i) => a + (i.e - i.s), 0);
   const shift = list.find(i => i.k === "shift");
   $("sClasses").textContent = list.filter(i => i.k === "class").length;
-  $("sStudy").textContent = dur(sum("study")) || "–";
-  $("sWork").textContent = dur(sum("workout")) || "Rest";
-  $("sShift").textContent = shift ? fmt(shift.s) : "Off";
-  $("tag").textContent = shift ? "Shift day" : "No shift";
-  $("tag").className = "tag" + (shift ? "" : " off");
+  const cls = list.filter(i => i.k === "class");
+  const short12 = m => fmt(m).replace(":00 ", " ").replace(" AM", "").replace(" PM", "");
+  $("sStudy").textContent = cls.length ? short12(cls[0].s) : "–";
+  $("sWork").textContent = cls.length ? short12(Math.max(...cls.map(i => i.e ?? i.s))) : "–";
+  $("sShift").textContent = cls.filter(i => /lab/i.test(i.n)).length;
+  $("tag").textContent = cls.length ? (cls.length === 1 ? "1 class" : cls.length + " classes") : "No classes";
+  $("tag").className = "tag" + (cls.length ? "" : " off");
 
   $("list").innerHTML = list.length ? list.map((it, i) =>
     `<div class="item k-${esc(it.k)}${done.includes(i) ? " done" : ""}${i === cur ? " now" : ""}" data-i="${i}" role="checkbox" aria-checked="${done.includes(i)}" tabindex="0">
@@ -362,8 +364,8 @@ function startBlank(){
   saveWeek(NAMES.map(name => ({ name, items: [] }))); render(); openEditor();
 }
 function resetSample(){
-  if (!confirm("Reset to the sample routine? Your own routine will be removed.")) return;
-  saveWeek(null); closeEditor(); render(); toast("Sample routine restored");
+  if (!confirm("Reset to the class timetable? Your own changes will be removed.")) return;
+  saveWeek(null); closeEditor(); render(); toast("Class timetable restored");
 }
 function toast(t){ const el = $("toast"); el.textContent = t; el.classList.add("show"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("show"), 1800); }
 
@@ -495,16 +497,17 @@ const QUOTES = [
   "Focus rakho, baaki sab khud ho jayega."
 ];
 const NAME_KEY = "md-name";
-let userName = get(NAME_KEY, "Major Sahab"), qIdx = Math.floor(Math.random() * QUOTES.length);
+let userName = get(NAME_KEY, ""), qIdx = Math.floor(Math.random() * QUOTES.length);
 function greet(){
   const h = new Date().getHours();
   const [hi, sub] = h >= 5 && h < 12 ? ["Good morning", "Let's make today count."]
     : h >= 12 && h < 17 ? ["Good afternoon", "Keep the momentum going."]
     : h >= 17 && h < 21 ? ["Good evening", "Strong finish to the day."]
     : ["Good night", "Shift mode on — stay sharp, then rest well."];
-  $("hello").innerHTML = hi + ', <span>' + esc(userName) + '</span>';
+  $("hello").innerHTML = userName ? hi + ', <span>' + esc(userName) + '</span>' : hi + ' <span>👋</span>';
+  $("hello").title = userName ? "Tap to change your name" : "Tap to add your name";
   $("helloSub").textContent = sub;
-  $("qName").textContent = userName;
+  $("qName").textContent = userName || "BSSE-5D";
 }
 function nextQuote(){
   const q = $("quote"); q.style.opacity = 0;
@@ -513,7 +516,7 @@ function nextQuote(){
 $("qText").textContent = QUOTES[qIdx];
 $("quote").onclick = nextQuote;
 $("hello").onclick = () => {
-  const n = prompt("What should I call you?", userName);
+  const n = prompt("What should I call you?", userName || "");
   if (n && n.trim()) { userName = n.trim().slice(0, 30); put(NAME_KEY, userName); greet(); toast("Hello, " + userName + "!"); }
 };
 greet();

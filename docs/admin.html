@@ -61,6 +61,7 @@ th{font-size:10.5px;color:var(--mut);letter-spacing:.1em;text-transform:uppercas
 .toast.show{opacity:1;transform:translate(-50%,0)}
 .center{max-width:420px;margin:8vh auto 0}
 .link{background:none;border:0;color:var(--gold);font:600 13px Inter,sans-serif;cursor:pointer;padding:0}
+.chips-a{display:flex;flex-wrap:wrap;gap:6px}
 .empty{color:var(--mut);font-size:13px;text-align:center;padding:16px}
 @media(max-width:520px){.row{grid-template-columns:1fr}.tab{font-size:12px}}
 </style>
@@ -90,10 +91,10 @@ th{font-size:10.5px;color:var(--mut);letter-spacing:.1em;text-transform:uppercas
     </div>
     <div class="stats"><div class="stat"><b id="stNotes">0</b><span>Notes</span></div><div class="stat"><b id="stQuiz">0</b><span>Quizzes</span></div><div class="stat"><b id="stAtt">0</b><span>Submissions</span></div></div>
     <nav class="tabs">
-      <button class="tab on" data-t="notes">Notes</button><button class="tab" data-t="quiz">Quizzes</button><button class="tab" data-t="results">Results</button><button class="tab" data-t="ann">Announce</button>
+      <button class="tab on" data-t="ann">Announce</button><button class="tab" data-t="notes">Notes</button><button class="tab" data-t="quiz">Quizzes</button><button class="tab" data-t="results">Results</button>
     </nav>
 
-    <div data-p="notes">
+    <div data-p="notes" hidden>
       <div class="panel">
         <h2>Upload notes</h2>
         <div class="row"><div><label class="l">Subject</label><select id="nSubject"></select></div><div><label class="l">Title</label><input id="nTitle" placeholder="e.g. Lecture 7 — Paging"></div></div>
@@ -129,12 +130,21 @@ th{font-size:10.5px;color:var(--mut);letter-spacing:.1em;text-transform:uppercas
       </div>
     </div>
 
-    <div data-p="ann" hidden>
+    <div data-p="ann">
       <div class="panel">
-        <h2>Announcement</h2>
-        <textarea id="aText" placeholder="e.g. Tomorrow's DSA class is moved to 11:30 in A83-010"></textarea>
+        <h2>Send to class</h2>
+        <div class="sub" style="margin:-6px 0 10px">Quiz reminder, class change, assignment deadline — everyone with the app gets a notification.</div>
+        <div class="chips-a">
+          <button class="btn ghost sm" data-tpl="Kal {S} ka quiz hai. Topic: ____. Notes Class tab se download kar lein.">📝 Quiz tomorrow</button>
+          <button class="btn ghost sm" data-tpl="{S} ki assignment ____ tak submit karni hai.">📌 Assignment</button>
+          <button class="btn ghost sm" data-tpl="Aaj {S} ki class ____ mein hogi.">🏫 Room change</button>
+          <button class="btn ghost sm" data-tpl="Aaj {S} ki class nahi hogi.">❌ Class off</button>
+        </div>
+        <label class="l">Subject (fills the template)</label><select id="aSubject"></select>
+        <label class="l">Message</label>
+        <textarea id="aText" placeholder="e.g. Kal Web Engineering ka quiz hai. Topic: JavaScript DOM. Notes Class tab se download kar lein."></textarea>
         <div class="actions"><button class="btn gold" id="aSave">Post to class</button></div>
-        <div class="hint">Shows at the top of the Class tab and sends a notification to the app.</div>
+        <div class="hint">Shows at the top of the Class tab and arrives as a notification on every phone with the app (within ~15–30 minutes).</div>
       </div>
       <div class="panel"><h2>Recent</h2><div id="aList"></div></div>
     </div>
@@ -190,7 +200,7 @@ async function start(){
   $("clsName").textContent = C.className;
   $("who").textContent = "Signed in as " + session.user.email;
   const opts = C.subjects.map(s => `<option>${esc(s)}</option>`).join("");
-  $("nSubject").innerHTML = opts; $("qSubject").innerHTML = opts;
+  $("nSubject").innerHTML = opts; $("qSubject").innerHTML = opts; $("aSubject").innerHTML = opts;
   if (!$("qList").children.length) { addQ(); }
   refresh();
 }
@@ -310,11 +320,15 @@ $("rCsv").onclick = () => {
 };
 
 /* ---------- announcements ---------- */
+document.querySelectorAll("[data-tpl]").forEach(b => b.onclick = () => {
+  $("aText").value = b.dataset.tpl.replace("{S}", $("aSubject").value); $("aText").focus();
+  const i = $("aText").value.indexOf("____"); if (i >= 0) $("aText").setSelectionRange(i, i + 4);
+});
 $("aSave").onclick = () => busy($("aSave"), async () => {
   const message = $("aText").value.trim(); if (!message) return toast("Write something first");
   const { error } = await sb.from("announcements").insert({ message });
   if (error) return toast(error.message);
-  $("aText").value = ""; toast("Posted to class ✓"); refresh();
+  $("aText").value = ""; toast("Sent to class ✓ — students will be notified"); refresh();
 });
 
 start();
