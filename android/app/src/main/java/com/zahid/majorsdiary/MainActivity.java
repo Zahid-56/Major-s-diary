@@ -1,23 +1,31 @@
 package com.zahid.majorsdiary;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-/** Opens the full planner (the hosted web app). Routines saved there are shared with the widget. */
+/**
+ * Hosts the planner and class portal (the web app). Routines saved there feed the widgets,
+ * and joining the class turns on notifications for notes, quizzes and announcements.
+ */
 public class MainActivity extends Activity {
 
+    static final String EXTRA_TAB = "tab";
+    private static final String APP_HOST = "zahid-56.github.io";
     private static final String APP_URL = "https://zahid-56.github.io/Major-s-diary/";
-
-    private static final int PICK_IMAGE = 42;
+    private static final int PICK_FILE = 42;
 
     private WebView web;
     private ValueCallback<Uri[]> fileCallback;
@@ -32,16 +40,25 @@ public class MainActivity extends Activity {
         web.setBackgroundColor(Color.parseColor("#07090F"));
         web.getSettings().setJavaScriptEnabled(true);
         web.getSettings().setDomStorageEnabled(true);
-        web.setWebViewClient(new WebViewClient());
-        // Enables JS dialogs (confirm/prompt) and the photo picker for "My photo" backgrounds.
+        web.addJavascriptInterface(new Bridge(getApplicationContext()), "MajorsDiary");
+
+        web.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                Uri uri = request.getUrl();
+                if (APP_HOST.equals(uri.getHost())) return false;
+                openExternal(uri);   // notes, Drive links, YouTube, APK downloads → browser / matching app
+                return true;
+            }
+        });
+        // Enables JS dialogs (confirm/prompt) and the file picker for photos and notes uploads.
         web.setWebChromeClient(new WebChromeClient() {
             @Override
             public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> callback, FileChooserParams params) {
                 if (fileCallback != null) fileCallback.onReceiveValue(null);
                 fileCallback = callback;
-                Intent pick = new Intent(Intent.ACTION_GET_CONTENT).addCategory(Intent.CATEGORY_OPENABLE).setType("image/*");
                 try {
-                    startActivityForResult(Intent.createChooser(pick, "Choose a photo"), PICK_IMAGE);
+                    startActivityForResult(params.createIntent(), PICK_FILE);
                 } catch (Exception e) {
                     fileCallback = null;
                     return false;
@@ -49,20 +66,49 @@ public class MainActivity extends Activity {
                 return true;
             }
         });
-        web.addJavascriptInterface(new Bridge(getApplicationContext()), "MajorsDiary");
-        web.loadUrl(APP_URL);
+        web.setDownloadListener((url, userAgent, contentDisposition, mimeType, length) -> openExternal(Uri.parse(url)));
+
+        web.loadUrl(urlFor(getIntent()));
         setContentView(web);
 
+        Notify.ensureChannels(this);
+        askNotificationPermission();
         DiaryWidget.refreshAll(this);
+        ReminderReceiver.scheduleNext(this);
+        ClassSyncJob.schedule(this);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if ("class".equals(intent.getStringExtra(EXTRA_TAB)) && web != null) {
+            web.evaluateJavascript("location.hash='#class'", null);
+        }
+    }
+
+    private static String urlFor(Intent intent) {
+        return "class".equals(intent.getStringExtra(EXTRA_TAB)) ? APP_URL + "#class" : APP_URL;
+    }
+
+    private void openExternal(Uri uri) {
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, uri));
+        } catch (Exception ignored) {
+        }
+    }
+
+    private void askNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= 33
+                && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 7);
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode != PICK_IMAGE || fileCallback == null) return;
-        Uri[] result = null;
-        if (resultCode == RESULT_OK && data != null && data.getData() != null) result = new Uri[]{data.getData()};
-        fileCallback.onReceiveValue(result);
+        if (requestCode != PICK_FILE || fileCallback == null) return;
+        fileCallback.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, data));
         fileCallback = null;
     }
 
@@ -72,7 +118,7 @@ public class MainActivity extends Activity {
         else super.onBackPressed();
     }
 
-    /** Lets the web app hand the user's routine to the widget. */
+    /** Lets the web app talk to the native side. */
     static final class Bridge {
         private final Context context;
 
@@ -88,6 +134,13 @@ public class MainActivity extends Activity {
             context.getSharedPreferences(Schedule.PREFS, Context.MODE_PRIVATE)
                     .edit().putString(Schedule.KEY_ROUTINE, value).apply();
             DiaryWidget.routineChanged(context);
+            ReminderReceiver.scheduleNext(context);
+        }
+
+        @JavascriptInterface
+        public void setClassJoined(boolean joined) {
+            ClassSyncJob.setJoined(context, joined);
+            if (joined) ClassSyncJob.schedule(context);
         }
     }
 }
