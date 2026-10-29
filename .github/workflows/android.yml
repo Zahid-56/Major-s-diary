@@ -16,6 +16,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.ver.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 
@@ -33,16 +35,70 @@ jobs:
         run: |
           gradle assembleDebug --no-daemon
           cp app/build/outputs/apk/debug/app-debug.apk ../MajorsDiary.apk
-          echo "VERSION=$(grep -oP "versionName '\K[^']+" app/build.gradle)" >> "$GITHUB_ENV"
+
+      - id: ver
+        run: echo "version=$(grep -oP "versionName '\K[^']+" android/app/build.gradle)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: apk
+          path: MajorsDiary.apk
+
+  # Installs the APK on an Android emulator, opens it and fails if the app crashes.
+  smoke-test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: apk
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Open the app on Android 14
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          disable-animations: true
+          script: |
+            adb install -r MajorsDiary.apk
+            adb shell pm grant com.zahid.majorsdiary android.permission.POST_NOTIFICATIONS || true
+            adb logcat -c
+            adb shell am start -W -n com.zahid.majorsdiary/.MainActivity
+            sleep 25
+            adb shell cmd jobscheduler run -f com.zahid.majorsdiary 51 || true
+            sleep 5
+            adb logcat -d -b crash > crash.txt || true
+            adb logcat -d AndroidRuntime:E MajorsDiary:E *:S > errors.txt || true
+            echo "===== crash buffer =====" && cat crash.txt
+            echo "===== app errors =====" && cat errors.txt
+            adb shell pidof com.zahid.majorsdiary && echo "APP IS RUNNING" || echo "APP NOT RUNNING"
+            if grep -q "com.zahid.majorsdiary" crash.txt; then echo "::error::App crashed — see crash buffer above"; exit 1; fi
+            adb shell pidof com.zahid.majorsdiary
+
+  release:
+    needs: [build, smoke-test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: apk
 
       - name: Publish release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ env.VERSION }}
-          name: Major's Diary ${{ env.VERSION }}
+          tag_name: v${{ needs.build.outputs.version }}
+          name: Major's Diary ${{ needs.build.outputs.version }}
           make_latest: true
           overwrite_files: true
           body: |
             **Install:** download `MajorsDiary.apk` on your Android phone and open it.
+            **Class:** open the Class tab and enter the code your CR shared.
             **Widgets:** long-press your home screen → Widgets → *Major's Diary · Mini* (2×2) or *Full day* (4×4).
           files: MajorsDiary.apk
