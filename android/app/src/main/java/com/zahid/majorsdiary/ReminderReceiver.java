@@ -26,8 +26,8 @@ public class ReminderReceiver extends BroadcastReceiver {
             }
         }
         // Boot, app update, time change or a reminder just fired: (re)schedule the next one.
-        scheduleNext(context);
-        ClassSyncJob.schedule(context);
+        MainActivity.safe(() -> scheduleNext(context));
+        MainActivity.safe(() -> ClassSyncJob.schedule(context));
     }
 
     /** Finds the next class in the routine (today or the coming week) and sets an alarm before it. */

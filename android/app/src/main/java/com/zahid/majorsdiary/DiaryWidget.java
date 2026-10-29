@@ -24,7 +24,7 @@ public class DiaryWidget extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager manager, int[] ids) {
-        refreshAll(context);
+        MainActivity.safe(() -> refreshAll(context));
     }
 
     @Override

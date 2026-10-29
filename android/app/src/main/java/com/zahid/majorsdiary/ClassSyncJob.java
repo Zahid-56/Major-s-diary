@@ -57,7 +57,7 @@ public class ClassSyncJob extends JobService {
         new Thread(() -> {
             try {
                 sync(getApplicationContext());
-            } catch (Exception ignored) {
+            } catch (Throwable ignored) {
             }
             jobFinished(params, false);
         }).start();

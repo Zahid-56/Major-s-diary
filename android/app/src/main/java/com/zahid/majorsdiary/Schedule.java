@@ -9,20 +9,20 @@ import java.util.Calendar;
 
 /**
  * Weekly routine. Index 0 = Monday … 6 = Sunday. Each item: {time label, title, type, start minute}.
- * The built-in sample (BSSE-5D timetable) is used until the user saves their own routine in the app.
+ * The built-in BSSE-5D class timetable is used until the user saves their own routine in the app.
  */
 final class Schedule {
 
     static final String[] DAYS = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
 
     static final String[][][] ITEMS = {
-        {{"8:00", "Wake up & get ready", "life", "480"}, {"8:30", "Web Engineering", "class", "510"}, {"9:30", "Data Structure & Algorithm", "class", "570"}, {"10:30", "Breakfast + DSA recap", "life", "630"}, {"11:30", "Operating System Lab", "class", "690"}, {"1:30", "Computer Org. & Assembly", "class", "810"}, {"2:30", "Design & Analysis of Algorithm", "class", "870"}, {"3:30", "Lunch + rest", "life", "930"}, {"5:00 PM", "Study · 1 hour", "study", "1020"}, {"6:30 PM", "Workout · Upper body (home)", "workout", "1110"}, {"8:00 PM", "Dinner", "life", "1200"}, {"9:00 PM", "Free time + prep for Tuesday", "life", "1260"}, {"11:00 PM", "Sleep", "sleep", "1380"}},
-        {{"7:50", "Wake up & get ready", "life", "470"}, {"8:30", "Data Structure & Algorithm Lab", "class", "510"}, {"11:30", "Brunch", "life", "690"}, {"12:15", "Study · 1 hour", "study", "735"}, {"1:30", "Computer Org. & Assembly", "class", "810"}, {"2:30", "Agile Software Development", "class", "870"}, {"3:45", "Nap", "sleep", "945"}, {"5:00 PM", "Mobility · 15 min", "workout", "1020"}, {"5:15 PM", "Meal", "life", "1035"}, {"5:45 PM", "Work shift (from home)", "shift", "1065"}, {"2:15 AM", "Sleep", "sleep", "1575"}},
-        {{"9:00", "Wake up & breakfast", "life", "540"}, {"9:30", "Operating System", "class", "570"}, {"10:30", "Data Structure & Algorithm", "class", "630"}, {"11:30", "Lunch", "life", "690"}, {"12:15", "Study · 1 hour", "study", "735"}, {"1:30", "Design & Analysis of Algorithm", "class", "810"}, {"2:30", "Computer Org. & Assembly Lab", "class", "870"}, {"4:35", "Power nap", "sleep", "995"}, {"5:20 PM", "Meal", "life", "1040"}, {"5:45 PM", "Work shift (from home)", "shift", "1065"}, {"2:15 AM", "Sleep", "sleep", "1575"}},
-        {{"9:30", "Wake up & breakfast", "life", "570"}, {"9:50", "Study · 30 min", "study", "590"}, {"10:30", "Operating System", "class", "630"}, {"11:30", "Web Engineering Lab", "class", "690"}, {"1:30", "Agile Software Development", "class", "810"}, {"2:30", "Design & Analysis of Algorithm", "class", "870"}, {"3:30", "Lunch", "life", "930"}, {"4:15", "Workout · Lower body (home)", "workout", "975"}, {"5:00 PM", "Shower + meal", "life", "1020"}, {"5:45 PM", "Work shift (from home)", "shift", "1065"}, {"2:15 AM", "Sleep", "sleep", "1575"}},
-        {{"9:45", "Wake up & breakfast", "life", "585"}, {"10:30", "Web Engineering", "class", "630"}, {"11:30", "Data Structure & Algorithm", "class", "690"}, {"12:30", "Lunch + break", "life", "750"}, {"1:30", "Agile Software Development Lab", "class", "810"}, {"3:30", "Study · 1 hour", "study", "930"}, {"4:35", "Workout · Core (home)", "workout", "995"}, {"5:00 PM", "Rest + meal", "life", "1020"}, {"5:45 PM", "Work shift (from home)", "shift", "1065"}, {"2:15 AM", "Sleep", "sleep", "1575"}},
-        {{"10:00", "Wake up & breakfast", "life", "600"}, {"11:00", "Deep study · 3 hours", "study", "660"}, {"2:00", "Lunch", "life", "840"}, {"3:00", "Errands / free time", "life", "900"}, {"4:00", "Workout · Full body (home)", "workout", "960"}, {"5:00 PM", "Shower + meal", "life", "1020"}, {"5:45 PM", "Work shift (from home)", "shift", "1065"}, {"2:15 AM", "Sleep", "sleep", "1575"}},
-        {{"10:00", "Wake up & breakfast", "life", "600"}, {"11:00", "Study · 3 hours", "study", "660"}, {"2:00", "Lunch", "life", "840"}, {"3:00", "Free time", "life", "900"}, {"4:00", "Workout · HIIT (home)", "workout", "960"}, {"5:00 PM", "Weekly review", "study", "1020"}, {"8:00 PM", "Dinner", "life", "1200"}, {"10:30 PM", "Sleep", "sleep", "1350"}}
+        {{"8:30", "Web Engineering", "class", "510"}, {"9:30", "Data Structure & Algorithm", "class", "570"}, {"11:30", "Operating System Lab", "class", "690"}, {"1:30", "Computer Org. & Assembly", "class", "810"}, {"2:20", "Design & Analysis of Algorithm", "class", "860"}},
+        {{"8:30", "Data Structure & Algorithm Lab", "class", "510"}, {"1:30", "Computer Org. & Assembly", "class", "810"}, {"2:20", "Agile Software Development", "class", "860"}},
+        {{"9:30", "Operating System", "class", "570"}, {"10:30", "Data Structure & Algorithm", "class", "630"}, {"1:30", "Design & Analysis of Algorithm", "class", "810"}, {"2:20", "Computer Org. & Assembly Lab", "class", "860"}},
+        {{"10:30", "Operating System", "class", "630"}, {"1:30", "Agile Software Development", "class", "810"}, {"2:20", "Design & Analysis of Algorithm", "class", "860"}},
+        {{"8:30", "Web Engineering Lab", "class", "510"}, {"10:30", "Web Engineering", "class", "630"}, {"11:30", "Data Structure & Algorithm", "class", "690"}, {"1:30", "Agile Software Development Lab", "class", "810"}},
+        {},
+        {}
     };
 
     static final String PREFS = "diary";

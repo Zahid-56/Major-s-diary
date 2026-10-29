@@ -71,11 +71,20 @@ public class MainActivity extends Activity {
         web.loadUrl(urlFor(getIntent()));
         setContentView(web);
 
-        Notify.ensureChannels(this);
-        askNotificationPermission();
-        DiaryWidget.refreshAll(this);
-        ReminderReceiver.scheduleNext(this);
-        ClassSyncJob.schedule(this);
+        // Background setup must never stop the app from opening.
+        safe(() -> Notify.ensureChannels(this));
+        safe(this::askNotificationPermission);
+        safe(() -> DiaryWidget.refreshAll(this));
+        safe(() -> ReminderReceiver.scheduleNext(this));
+        safe(() -> ClassSyncJob.schedule(this));
+    }
+
+    static void safe(Runnable task) {
+        try {
+            task.run();
+        } catch (Throwable t) {
+            android.util.Log.e("MajorsDiary", "Background setup failed", t);
+        }
     }
 
     @Override
@@ -133,14 +142,14 @@ public class MainActivity extends Activity {
             if (value.equals(old)) return;
             context.getSharedPreferences(Schedule.PREFS, Context.MODE_PRIVATE)
                     .edit().putString(Schedule.KEY_ROUTINE, value).apply();
-            DiaryWidget.routineChanged(context);
-            ReminderReceiver.scheduleNext(context);
+            safe(() -> DiaryWidget.routineChanged(context));
+            safe(() -> ReminderReceiver.scheduleNext(context));
         }
 
         @JavascriptInterface
         public void setClassJoined(boolean joined) {
-            ClassSyncJob.setJoined(context, joined);
-            if (joined) ClassSyncJob.schedule(context);
+            safe(() -> ClassSyncJob.setJoined(context, joined));
+            if (joined) safe(() -> ClassSyncJob.schedule(context));
         }
     }
 }

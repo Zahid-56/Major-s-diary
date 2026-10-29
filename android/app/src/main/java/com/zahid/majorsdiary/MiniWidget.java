@@ -21,7 +21,7 @@ public class MiniWidget extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager manager, int[] ids) {
-        refresh(context);
+        MainActivity.safe(() -> refresh(context));
     }
 
     @Override
