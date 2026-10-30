@@ -22,7 +22,7 @@ h1{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:30px;margin:4px 
 h2{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:20px;margin:0 0 12px}
 .sub{color:var(--mut);font-size:13px}
 .panel{background:rgba(12,15,24,.6);border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:14px}
-.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:4px;border-radius:16px;background:var(--s1);border:1px solid var(--line);margin-bottom:14px}
+.tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:4px;border-radius:16px;background:var(--s1);border:1px solid var(--line);margin-bottom:14px}
 .tab{appearance:none;border:0;background:transparent;color:var(--mut);padding:10px 4px;border-radius:12px;font:600 13px Inter,sans-serif;cursor:pointer}
 .tab.on{background:linear-gradient(160deg,var(--gold),var(--gold2));color:#1a1204}
 label.l{display:block;font-size:10.5px;color:var(--mut);letter-spacing:.1em;text-transform:uppercase;margin:12px 0 5px}
@@ -63,7 +63,7 @@ th{font-size:10.5px;color:var(--mut);letter-spacing:.1em;text-transform:uppercas
 .link{background:none;border:0;color:var(--gold);font:600 13px Inter,sans-serif;cursor:pointer;padding:0}
 .chips-a{display:flex;flex-wrap:wrap;gap:6px}
 .empty{color:var(--mut);font-size:13px;text-align:center;padding:16px}
-@media(max-width:520px){.row{grid-template-columns:1fr}.tab{font-size:12px}}
+@media(max-width:520px){.row{grid-template-columns:1fr}.tab{font-size:11px;padding:10px 2px}.stat b{font-size:20px}}
 </style>
 </head>
 <body>
@@ -89,9 +89,9 @@ th{font-size:10.5px;color:var(--mut);letter-spacing:.1em;text-transform:uppercas
       <div><div class="eyebrow">CR Panel</div><h1 id="clsName"></h1><div class="sub" id="who"></div></div>
       <button class="btn ghost sm" id="logout">Sign out</button>
     </div>
-    <div class="stats"><div class="stat"><b id="stNotes">0</b><span>Notes</span></div><div class="stat"><b id="stQuiz">0</b><span>Quizzes</span></div><div class="stat"><b id="stAtt">0</b><span>Submissions</span></div></div>
+    <div class="stats"><div class="stat"><b id="stMem">0</b><span>Students joined</span></div><div class="stat"><b id="stDl">–</b><span>App downloads</span></div><div class="stat"><b id="stAtt">0</b><span>Quiz submissions</span></div></div>
     <nav class="tabs">
-      <button class="tab on" data-t="ann">Announce</button><button class="tab" data-t="notes">Notes</button><button class="tab" data-t="quiz">Quizzes</button><button class="tab" data-t="results">Results</button>
+      <button class="tab on" data-t="ann">Announce</button><button class="tab" data-t="notes">Notes</button><button class="tab" data-t="quiz">Quizzes</button><button class="tab" data-t="results">Results</button><button class="tab" data-t="students">Students</button>
     </nav>
 
     <div data-p="notes" hidden>
@@ -127,6 +127,17 @@ th{font-size:10.5px;color:var(--mut);letter-spacing:.1em;text-transform:uppercas
         <label class="l">Quiz</label><select id="rQuiz"></select>
         <div id="rTable" style="margin-top:12px"></div>
         <div class="actions"><button class="btn ghost sm" id="rCsv">Download CSV</button></div>
+      </div>
+    </div>
+
+    <div data-p="students" hidden>
+      <div class="panel">
+        <h2>Students</h2>
+        <div class="sub" id="sSummary" style="margin:-6px 0 12px"></div>
+        <input id="sSearch" placeholder="Search name or roll number">
+        <div id="sTable" style="margin-top:12px;overflow-x:auto"></div>
+        <div class="actions"><button class="btn ghost sm" id="sCsv">Download CSV</button></div>
+        <div class="hint">A student shows here after installing the app (or opening the website) and joining with the class code. GitHub only counts downloads — it can't tell who downloaded.</div>
       </div>
     </div>
 
@@ -202,7 +213,7 @@ async function start(){
   const opts = C.subjects.map(s => `<option>${esc(s)}</option>`).join("");
   $("nSubject").innerHTML = opts; $("qSubject").innerHTML = opts; $("aSubject").innerHTML = opts;
   if (!$("qList").children.length) { addQ(); }
-  refresh();
+  refresh(); loadStudents(); loadDownloads();
 }
 
 /* ---------- tabs ---------- */
@@ -210,6 +221,7 @@ document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
   document.querySelectorAll(".tab").forEach(x => x.classList.toggle("on", x === t));
   document.querySelectorAll("[data-p]").forEach(p => p.hidden = p.dataset.p !== t.dataset.t);
   if (t.dataset.t === "results") loadResults();
+  if (t.dataset.t === "students") loadStudents();
 });
 
 /* ---------- lists ---------- */
@@ -222,7 +234,7 @@ async function refresh(){
     sb.from("quiz_attempts").select("quiz_id", { count: "exact", head: false })
   ]);
   const notes = n.data || []; quizzes = q.data || []; const anns = a.data || []; const atts = att.data || [];
-  $("stNotes").textContent = notes.length; $("stQuiz").textContent = quizzes.length; $("stAtt").textContent = atts.length;
+  $("stAtt").textContent = atts.length;
   const counts = atts.reduce((m, x) => (m[x.quiz_id] = (m[x.quiz_id] || 0) + 1, m), {});
 
   $("nList").innerHTML = notes.length ? notes.map(x => `<div class="item"><div><span class="tag">${esc(C.short[x.subject] || x.subject)}</span><b>${esc(x.title)}</b><small>${when(x.created_at)}${x.file_name ? " · " + esc(x.file_name) : x.link ? " · link" : ""}</small></div><button class="btn danger sm" data-del-note="${x.id}">Delete</button></div>`).join("") : '<div class="empty">No notes yet.</div>';
@@ -330,6 +342,40 @@ $("aSave").onclick = () => busy($("aSave"), async () => {
   if (error) return toast(error.message);
   $("aText").value = ""; toast("Sent to class ✓ — students will be notified"); refresh();
 });
+
+/* ---------- students & downloads ---------- */
+let members = [];
+async function loadStudents(){
+  const { data } = await sb.from("members").select("*").order("joined_at", { ascending: false });
+  members = data || [];
+  $("stMem").textContent = members.length;
+  const app = members.filter(m => m.platform === "app").length;
+  const active = members.filter(m => Date.now() - new Date(m.last_seen).getTime() < 7 * 864e5).length;
+  $("sSummary").textContent = `${members.length} joined · ${app} on the app · ${members.length - app} on the website · ${active} active this week`;
+  drawStudents();
+}
+function drawStudents(){
+  const q = $("sSearch").value.trim().toLowerCase();
+  const list = members.filter(m => !q || m.name.toLowerCase().includes(q) || m.roll_no.toLowerCase().includes(q));
+  const ago = d => { const m = (Date.now() - new Date(d).getTime()) / 60000; return m < 60 ? "just now" : m < 1440 ? Math.floor(m / 60) + "h ago" : Math.floor(m / 1440) + "d ago"; };
+  $("sTable").innerHTML = list.length ? `<table><tr><th>#</th><th>Student</th><th>Using</th><th>Active</th><th></th></tr>${list.map((m, i) => `<tr><td>${i + 1}</td><td><b style="font-weight:600">${esc(m.name)}</b><br><small style="color:var(--mut)">${esc(m.roll_no)} · joined ${new Date(m.joined_at).toLocaleDateString(undefined, { day: "numeric", month: "short" })}</small></td><td>${m.platform === "app" ? "📱 App" : "🌐 Web"}</td><td style="white-space:nowrap">${ago(m.last_seen)}</td><td><button class="btn danger sm" data-del-mem="${esc(m.device_id)}" title="Remove">✕</button></td></tr>`).join("")}</table>` : `<div class="empty">${members.length ? "No match." : "No students yet — share the app link with your class."}</div>`;
+  document.querySelectorAll("[data-del-mem]").forEach(b => b.onclick = async () => { if (!confirm("Remove this entry from the list?")) return; await sb.from("members").delete().eq("device_id", b.dataset.delMem); loadStudents(); });
+}
+$("sSearch").oninput = drawStudents;
+$("sCsv").onclick = () => {
+  if (!members.length) return toast("No students yet");
+  const csv = [["Name", "Roll no", "Using", "Joined", "Last active"], ...members.map(m => [m.name, m.roll_no, m.platform, new Date(m.joined_at).toLocaleString(), new Date(m.last_seen).toLocaleString()])]
+    .map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" })); a.download = "BSSE5D_students.csv"; a.click();
+};
+async function loadDownloads(){
+  try {
+    const r = await fetch("https://api.github.com/repos/Zahid-56/Major-s-diary/releases?per_page=100");
+    const rel = await r.json();
+    const total = rel.flatMap(x => x.assets || []).filter(a => /\.apk$/i.test(a.name)).reduce((n, a) => n + a.download_count, 0);
+    $("stDl").textContent = total;
+  } catch (e) { $("stDl").textContent = "–"; }
+}
 
 start();
 </script>

@@ -23,6 +23,14 @@
   const when = d => new Intl.DateTimeFormat(undefined, { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }).format(new Date(d));
   const size = b => !b ? "" : b > 1048576 ? (b / 1048576).toFixed(1) + " MB" : Math.max(1, Math.round(b / 1024)) + " KB";
   const isNew = d => lastSeen && new Date(d).getTime() > lastSeen;
+  function deviceId() {
+    let d = get("md-device", "");
+    if (!d) { d = (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2)); put("md-device", d); }
+    return d;
+  }
+  function register(name, roll) {
+    return api("rpc/register_member", { method: "POST", body: JSON.stringify({ p_device: deviceId(), p_name: name, p_roll: roll, p_platform: window.MajorsDiary ? "app" : "web" }) });
+  }
   const joined = () => (get("md-class", "") || "").toUpperCase() === C.classCode;
 
   /* ---------- tabs ---------- */
@@ -68,22 +76,40 @@
   /* ---------- render ---------- */
   function renderClass() {
     const v = $("classView");
-    if (!joined()) {
+    const me = get("md-student", { name: "", roll: "" });
+    const needsProfile = joined() && !(me.name && me.roll);
+    if (!joined() || needsProfile) {
       v.innerHTML = `<div class="join">
         <div class="eyebrow">Class portal</div>
-        <h3>Join your class</h3>
-        <p>Enter the class code your CR shared to get notes, quizzes and reminders.</p>
-        <input id="joinCode" maxlength="12" placeholder="CODE" autocomplete="off" autocapitalize="characters">
+        <h3>${needsProfile ? "One last step" : "Join your class"}</h3>
+        <p>${needsProfile ? "Add your name and roll number so your CR knows you have the app." : "Enter the class code your CR shared to get notes, quizzes and reminders."}</p>
+        ${needsProfile ? "" : '<input id="joinCode" maxlength="12" placeholder="CODE" autocomplete="off" autocapitalize="characters">'}
+        <input id="joinName" class="fld" style="text-align:left;letter-spacing:0;text-transform:none;font-weight:500;font-size:15px" placeholder="Your full name" value="${esc(me.name)}" autocomplete="name">
+        <input id="joinRoll" class="fld" style="text-align:left;letter-spacing:0;font-weight:500;font-size:15px;margin-bottom:6px" placeholder="Roll number (e.g. F23-0391)" value="${esc(me.roll)}" autocapitalize="characters">
+        <div class="hint" style="font-size:11.5px;color:var(--mut);margin-bottom:8px">Your name and roll number are shared with your CR.</div>
         <div class="err" id="joinErr"></div>
-        <button class="btn gold" id="joinBtn" style="width:100%">Join class</button>
+        <button class="btn gold" id="joinBtn" style="width:100%">${needsProfile ? "Save" : "Join class"}</button>
       </div>`;
-      const go = () => {
-        const c = $("joinCode").value.trim().toUpperCase().replace(/\s+/g, "");
-        if (c !== C.classCode) { $("joinErr").textContent = "That code isn't right — ask your CR."; return; }
-        put("md-class", c); try { window.MajorsDiary && window.MajorsDiary.setClassJoined(true); } catch (e) {}
+      const go = async () => {
+        const name = $("joinName").value.trim(), roll = $("joinRoll").value.trim().toUpperCase();
+        if (!needsProfile) {
+          const c = $("joinCode").value.trim().toUpperCase().replace(/\s+/g, "");
+          if (c !== C.classCode) { $("joinErr").textContent = "That code isn't right — ask your CR."; return; }
+        }
+        if (name.length < 3 || roll.length < 3) { $("joinErr").textContent = "Enter your full name and roll number."; return; }
+        $("joinBtn").disabled = true; $("joinBtn").textContent = "Joining…";
+        try {
+          await register(name, roll);
+        } catch (e) {
+          $("joinErr").textContent = "Couldn't connect — check your internet and try again.";
+          $("joinBtn").disabled = false; $("joinBtn").textContent = needsProfile ? "Save" : "Join class"; return;
+        }
+        put("md-student", { name, roll });
+        put("md-class", C.classCode); try { window.MajorsDiary && window.MajorsDiary.setClassJoined(true); } catch (e) {}
         toast("Welcome to " + C.className); renderClass(); load();
       };
-      $("joinBtn").onclick = go; $("joinCode").onkeydown = e => { if (e.key === "Enter") go(); };
+      $("joinBtn").onclick = go;
+      ["joinCode", "joinName", "joinRoll"].forEach(id => { const el = $(id); if (el) el.onkeydown = e => { if (e.key === "Enter") go(); }; });
       return;
     }
     const subjects = ["All", ...C.subjects];
@@ -201,6 +227,7 @@
 
   /* ---------- start ---------- */
   try { if (joined() && window.MajorsDiary) window.MajorsDiary.setClassJoined(true); } catch (e) {}
+  { const me = get("md-student", null); if (joined() && me && me.name && me.roll) register(me.name, me.roll).catch(() => {}); }
   const start = location.hash === "#class" ? "class" : get("md-tab", "routine");
   showTab(start);
   peek();
